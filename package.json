@@ -13,6 +13,8 @@
     "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
+    "@babylonjs/core": "^7.18.0",
+    "@babylonjs/gui": "^7.18.0",
     "@vitest/coverage-v8": "^2.0.5",
     "typescript": "^5.5.4",
     "vite": "^5.3.5",
