@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /guide/introduction/index
+      link: /pages/index
     - theme: alt
       text: github
       link: https://github.com/cocaine-coder/babylon-toolkits
@@ -20,11 +20,5 @@ hero:
 features:
   - icon: ⚡️
     title: 尽可能提供快速的方法
-    details: 
-  - icon: 🖖
-    title: 不依赖任何库
-    details: 
-  - icon: 🛠️
-    title: 充分的测试
-    details: 
+    details:
 ---

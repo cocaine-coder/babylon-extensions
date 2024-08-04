@@ -18,31 +18,30 @@ export default {
         sidebar: [
             {
                 text: '介绍',
-                collapsed: true,
+                collapsed: false,
                 items: [
-                    { text: '什么是wheater', link: '/guide/introduction/' },
-                    { text: '安装', link: '/guide/introduction/install' },
-                    { text: '反馈', link: '/guide/introduction/feedback' }
+                    { text: 'toolkits', link: '/pages/' },
+                    { text: '安装', link: '/pages/install' },
+                    { text: '反馈', link: '/pages/feedback' }
                 ]
             },
-            getRouters('guide', 'types', ['page', 'tree']),
-            getRouters('guide', 'utils', ['array', 'creator', 'date', 'deep', 'validator', 'common']),
-            getRouters('guide', 'models', ['tree'])
+            {
+                text: '功能',
+                collapsed: true,
+                base: "/pages/features/",
+                items: [
+                    {
+                        text: "切割",
+                        items: [
+                            { text: "盒子切割", link: 'clipper/box' }
+                        ]
+                    }, {
+                        text: "测量",
+                        link: 'measure'
+                    }
+                ]
+            }
         ],
         socialLinks: [{ icon: 'github', link: "https://github.com/cocaine-coder/babylon-toolkits" }]
     }
 } as UserConfig<DefaultTheme.Config>
-
-function getRouters(first: string, second: string, thirds: string[]) {
-    return {
-        text: second,
-        collapsed: true,
-        link: `/${first}/${second}/`,
-        items: thirds.map(x => {
-            return {
-                text: x,
-                link: `/${first}/${second}/${x}`
-            }
-        })
-    }
-}

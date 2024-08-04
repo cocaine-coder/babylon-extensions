@@ -2,45 +2,49 @@ import * as BABYLON from '@babylonjs/core';
 
 export interface ISceneClipper {
     setEnable(value: boolean): void;
-    setAuxiliaryMeshVisibility(visible: boolean): void;
-    setGizmoVisibility(visible: boolean): void;
+    setGizmoMeshVisibility(visible: boolean): void;
+    setAuxiliaryMeshOpacity(value: number): void;
     reset(): void;
     dispose(): void;
 }
 
 export abstract class AbstractSceneClipper implements ISceneClipper {
-    protected _disposed = false;
-    protected _enable = false;
-    protected _originPosition: Array<number>;
-    protected _auxiliaryMesh: BABYLON.Mesh;
+    private _disposed = false;
+    private _enable = false;
+    private _originPosition: Array<number>;
     protected _gizmoManager: BABYLON.GizmoManager;
+    readonly auxiliaryMesh: BABYLON.Mesh;
 
     /**
      *
      */
     constructor(protected scene: BABYLON.Scene) {
+        this.auxiliaryMesh = this.createAuxiliaryMesh();
+        this._originPosition = this.auxiliaryMesh.position.asArray();
+        this._gizmoManager = this.createGizmoManager(this.auxiliaryMesh);
 
+        this.auxiliaryMesh.isVisible = false;
     }
 
+    protected abstract createAuxiliaryMesh(): BABYLON.Mesh;
+
+    protected abstract createGizmoManager(auxiliaryMesh: BABYLON.Mesh): BABYLON.GizmoManager;
+
     protected abstract setClipperEnable(value: boolean): void;
+
+    abstract setAuxiliaryMeshOpacity(value: number): void;
 
     setEnable(value: boolean) {
         if (this._disposed) return;
         if (this._enable === value) return;
 
-        this._auxiliaryMesh.isVisible = this._enable;
-        this._gizmoManager.boundingBoxGizmoEnabled = this._enable;
+        this.auxiliaryMesh.isVisible = value;
 
         this.setClipperEnable(value);
         this._enable = value;
     }
 
-    setAuxiliaryMeshVisibility(visible: boolean) {
-        if (!this._enable) return;
-        this._auxiliaryMesh.isVisible = visible;
-    }
-
-    setGizmoVisibility(visible: boolean) {
+    setGizmoMeshVisibility(visible: boolean) {
         if (!this._enable) return;
         const gizmos = this._gizmoManager.gizmos;
         this.setMeshVisibleRecursive(gizmos.boundingBoxGizmo?._rootMesh, visible);
@@ -50,14 +54,14 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     }
 
     reset(): void {
-        this._auxiliaryMesh.position = new BABYLON.Vector3(this._originPosition[0], this._originPosition[1], this._originPosition[2]);
-        this._auxiliaryMesh.rotation = BABYLON.Vector3.Zero();
-        this._auxiliaryMesh.scaling = BABYLON.Vector3.One();
+        this.auxiliaryMesh.position = new BABYLON.Vector3(this._originPosition[0], this._originPosition[1], this._originPosition[2]);
+        this.auxiliaryMesh.rotation = BABYLON.Vector3.Zero();
+        this.auxiliaryMesh.scaling = BABYLON.Vector3.One();
     }
 
     dispose(): void {
         this.setEnable(false);
-        this.scene.removeMesh(this._auxiliaryMesh, true);
+        this.scene.removeMesh(this.auxiliaryMesh, true);
         this._gizmoManager.dispose();
         this._disposed = true;
     }

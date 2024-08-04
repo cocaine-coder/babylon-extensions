@@ -2,54 +2,65 @@ import * as BABYLON from '@babylonjs/core';
 import { AbstractSceneClipper } from './AbstractSceneClipper';
 import { Utils } from '../utils';
 
-export class SceneClipper extends AbstractSceneClipper {
-    private _meshes = new Array<BABYLON.AbstractMesh>();
+export class SceneClipperBox extends AbstractSceneClipper {
 
-    constructor(scene: BABYLON.Scene, filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
+    constructor(scene: BABYLON.Scene, private filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
         super(scene);
+    }
 
-        this._meshes = filter ? scene.meshes.filter(filter) : scene.meshes;
-        const { size, center } = Utils.getMeshesExtendsInfo(scene, filter);
+    setAuxiliaryMeshOpacity(value: number) {
+        value = value > 1 ? 1 : value < 0 ? 0 : value;
+        const material = this.auxiliaryMesh.material as BABYLON.StandardMaterial;
+        material.alpha = value;
+    }
+
+    protected createAuxiliaryMesh(): BABYLON.Mesh {
+        const scene = this.scene;
+        const filter = this.filter;
+
+        const { worldSize, worldCenter } = Utils.getMeshesExtendsInfo(scene, filter);
 
         const material = new BABYLON.StandardMaterial("clip-box-material", scene);
         material.emissiveColor = new BABYLON.Color3(1, 1, 1);
         material.alpha = 0.2;
 
         const box = BABYLON.MeshBuilder.CreateBox("clip-box", {
-            width: size.x,
-            height: size.y,
-            depth: size.z,
+            width: worldSize.x,
+            height: worldSize.y,
+            depth: worldSize.z,
         }, scene)!;
 
-        this._originPosition = center.asArray();
-        box.position = center;
+        box.position = worldCenter;
         box.material = material;
 
-        const gizmoManager = new BABYLON.GizmoManager(scene);
+        return box;
+    }
+
+    protected createGizmoManager(auxiliaryMesh: BABYLON.Mesh): BABYLON.GizmoManager {
+        const gizmoManager = new BABYLON.GizmoManager(this.scene);
         gizmoManager.boundingBoxGizmoEnabled = true;
-        gizmoManager.attachableMeshes = [box];
-        gizmoManager.attachToMesh(box);
+        gizmoManager.attachableMeshes = [auxiliaryMesh];
+        gizmoManager.attachToMesh(auxiliaryMesh);
         gizmoManager.gizmos.boundingBoxGizmo!.fixedDragMeshScreenSize = true;
         gizmoManager.gizmos.boundingBoxGizmo!.fixedDragMeshBoundsSize = true;
         gizmoManager.enableAutoPicking = false;
         gizmoManager.boundingBoxDragBehavior.disableMovement = true;
 
-        this._auxiliaryMesh = box;
-        this._gizmoManager = gizmoManager;
-
-        this._auxiliaryMesh.isVisible = false;
-        this._gizmoManager.boundingBoxGizmoEnabled = false;
+        return gizmoManager;
     }
 
     protected setClipperEnable(value: boolean) {
+        this._gizmoManager.boundingBoxGizmoEnabled = value;
+        const meshes = this.filter ? this.scene.meshes.filter(this.filter) : this.scene.meshes;
+
         if (value) {
             const scene = this.scene;
 
-            this._meshes.forEach(m => {
-                if (!(m instanceof BABYLON.Mesh)) return;
+            meshes.forEach(m => {
+                if (!(m instanceof BABYLON.Mesh) || this.auxiliaryMesh === m) return;
 
                 m.onBeforeRenderObservable.add(() => {
-                    const box = this._auxiliaryMesh;
+                    const box = this.auxiliaryMesh;
 
                     const data = BABYLON.VertexData.ExtractFromMesh(box);
                     const positions = new Array<{ x: number, y: number, z: number }>();
@@ -91,12 +102,8 @@ export class SceneClipper extends AbstractSceneClipper {
                 });
             });
         } else {
-            this._auxiliaryMesh.isVisible = false;
-            this._gizmoManager.boundingBoxGizmoEnabled = false;
-
-            this._meshes.forEach((m) => {
+            meshes.forEach((m) => {
                 if (!(m instanceof BABYLON.Mesh)) return;
-
                 m.onBeforeRenderObservable.clear();
                 m.onAfterRenderObservable.clear();
             })

@@ -5,6 +5,6 @@ export namespace Utils {
         const worldSize = worldExtends.max.subtract(worldExtends.min);
         const worldCenter = worldExtends.min.add(worldSize.scale(0.5));
 
-        return { extends: worldExtends , center: worldCenter, size: worldSize };
+        return { worldExtends, worldCenter, worldSize };
     }
 }
