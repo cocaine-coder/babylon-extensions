@@ -37,7 +37,11 @@ export default {
                         ]
                     }, {
                         text: "测量",
-                        link: 'measure'
+                        items: [
+                            { text: "高度", link: 'measure/elevation' },
+                            { text: "长度", link: 'measure/length' },
+                            { text: "面积", link: 'measure/area' }
+                        ]
                     }
                 ]
             }
