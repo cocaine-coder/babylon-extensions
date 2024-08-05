@@ -189,11 +189,6 @@
   resolved "https://registry.npmmirror.com/@babylonjs/core/-/core-7.18.0.tgz#de3ea35d00a9dfedbe520e9f4cede43af7f4c040"
   integrity sha512-i8Y6QyfFEymL2qH8NEef0bwU1ny8y0QswiLveB6dF9RHKh47DIIx+qh3XtUeQ2bnbuI0U52j/Til2HDfdiv8rQ==
 
-"@babylonjs/gui@^7.18.0":
-  version "7.18.0"
-  resolved "https://registry.npmmirror.com/@babylonjs/gui/-/gui-7.18.0.tgz#e674068f8efacba9b03db78c0ba4350eb6d7ccb9"
-  integrity sha512-xZQvGwGvlhkaD4PAHtyFpbWouNsBqVenNiMRWVPzFi/vu8TzkLM4IU89yTEywaGIH06mp3NLTDyb+MT1opgwGg==
-
 "@babylonjs/loaders@^7.18.0":
   version "7.18.0"
   resolved "https://registry.npmmirror.com/@babylonjs/loaders/-/loaders-7.18.0.tgz#2945f565b3424c6c995a4764fb0722971472a33d"

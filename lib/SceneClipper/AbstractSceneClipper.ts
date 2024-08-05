@@ -60,6 +60,7 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     }
 
     dispose(): void {
+        if(this._disposed) return;
         this.setEnable(false);
         this.scene.removeMesh(this.auxiliaryMesh, true);
         this._gizmoManager.dispose();
