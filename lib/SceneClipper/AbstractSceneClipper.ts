@@ -12,7 +12,7 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     private _disposed = false;
     private _enable = false;
     private _originPosition: Array<number>;
-    protected _gizmoManager: BABYLON.GizmoManager;
+    readonly _gizmoManager: BABYLON.GizmoManager;
     readonly auxiliaryMesh: BABYLON.Mesh;
 
     /**

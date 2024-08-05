@@ -1,4 +1,4 @@
-import { UserConfig, DefaultTheme } from 'vitepress'
+import { UserConfig, DefaultTheme } from 'vitepress';
 
 export default {
     title: 'babylon-toolkits',
@@ -46,6 +46,6 @@ export default {
                 ]
             }
         ],
-        socialLinks: [{ icon: 'github', link: "https://github.com/cocaine-coder/babylon-toolkits" }]
+        socialLinks: [{ icon: 'github', link: "https://github.com/cocaine-coder/babylon-toolkits" }],
     }
 } as UserConfig<DefaultTheme.Config>
