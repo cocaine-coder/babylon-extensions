@@ -16,7 +16,7 @@ export class MeasureLine extends AbstractMeasure {
     }
 
     onStart(): void {
-
+        
         const points = new Array<BABYLON.Vector3>();
 
         function createLinesMesh() {

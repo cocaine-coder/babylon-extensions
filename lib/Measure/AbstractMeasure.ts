@@ -23,12 +23,16 @@ export abstract class AbstractMeasure implements IMeasure {
     abstract onStop(): void;
 
     start() {
-        if (!this._started)
+        if (!this._started){
+            this.scene.defaultCursor= "crosshair";
             this.onStart();
+        }
+           
     }
 
     stop(): void {
         if (this._started) {
+            this.scene.defaultCursor= "default";
             this.onStop();
         }
     }
