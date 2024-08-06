@@ -1,6 +1,5 @@
 import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
-import { FollowDomManager } from '../DomManager';
 export interface MeasureLineOptions {
     scene: BABYLON.Scene;
 }
@@ -14,7 +13,6 @@ export class MeasureLine extends AbstractMeasure {
      */
     constructor(options: MeasureLineOptions) {
         super(options.scene);
-        this.followDomManager = new FollowDomManager(options.scene);
     }
 
     onStart(): void {
@@ -80,10 +78,11 @@ export class MeasureLine extends AbstractMeasure {
                         points.pop();
                         points.push(position);
 
-                        const div = document.createElement('div');
-                        div.innerText = BABYLON.Vector3.Distance(points[0], points[1]).toFixed(2) + " m";
-                        this.followDomManager.set(BABYLON.RandomGUID(), div, points[0].add(points[1]).scale(0.5));
-
+                        const distance = BABYLON.Vector3.Distance(points[0], points[1]).toFixed(2) + " m";
+                        this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
+                            x.wapper.innerText = distance;
+                            x.setPosition(points[0].add(points[1]).scale(0.5));
+                        });
                         this.meshes.push(linesMeshOptions.instance!);
 
                         linesMeshOptions.instance = undefined;
@@ -91,6 +90,7 @@ export class MeasureLine extends AbstractMeasure {
                         points.length = 0;
                     } else {
                         linesMeshOptions.id = BABYLON.GUID.RandomId();
+                        this.followDomManager.set(linesMeshOptions.id, "", position);
                         points.push(position);
                     }
                 }
@@ -112,6 +112,12 @@ export class MeasureLine extends AbstractMeasure {
                 linesMeshOptions.instance = BABYLON.MeshBuilder.CreateLines(linesMeshOptions.id, linesMeshOptions);
                 linesMeshOptions.instance.isPickable = false;
                 linesMeshOptions.instance.renderingGroupId = 1;
+
+                const distance = BABYLON.Vector3.Distance(points[0], points[1]).toFixed(2) + " m";
+                this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
+                    x.wapper.innerText = distance;
+                    x.setPosition(points[0].add(points[1]).scale(0.5));
+                });
             }
         });
     }

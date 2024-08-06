@@ -47,6 +47,7 @@ export abstract class AbstractMeasure implements IMeasure {
         this.meshes.forEach(mesh => {
             mesh.isVisible = value;
         });
+        this.followDomManager.setVisible(value);
     }
 
     dispose() {
