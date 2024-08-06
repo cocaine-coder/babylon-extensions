@@ -1,18 +1,20 @@
 import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
-import { Utils } from '../utils';
+import { FollowDomManager } from '../DomManager';
 export interface MeasureLineOptions {
     scene: BABYLON.Scene;
 }
 
 export class MeasureLine extends AbstractMeasure {
     private pointerObserver: BABYLON.Observer<BABYLON.PointerInfo> | undefined;
+    
 
     /**
      *
      */
     constructor(options: MeasureLineOptions) {
         super(options.scene);
+        this.followDomManager = new FollowDomManager(options.scene);
     }
 
     onStart(): void {
@@ -70,7 +72,7 @@ export class MeasureLine extends AbstractMeasure {
 
                         const div = document.createElement('div');
                         div.innerText = BABYLON.Vector3.Distance(points[0], points[1]).toFixed(2) + " m";
-                        Utils.createHtmlElementFollowCamera(this.scene, div, points[0].add(points[1]).scale(0.5));
+                        this.followDomManager.set(BABYLON.RandomGUID(), div, points[0].add(points[1]).scale(0.5));
                 
                         points.length = 0;
                     }

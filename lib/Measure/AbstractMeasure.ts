@@ -1,4 +1,5 @@
 import * as BABYLON from "@babylonjs/core";
+import { FollowDomManager } from "../DomManager";
 
 export interface IMeasure {
     start(): void;
@@ -11,28 +12,26 @@ export interface IMeasure {
 export abstract class AbstractMeasure implements IMeasure {
     private _started = false;
     protected meshes = new Array<BABYLON.AbstractMesh>();
+    protected followDomManager : FollowDomManager;
 
     /**
      *
      */
     constructor(protected scene: BABYLON.Scene) {
-
+        this.followDomManager = new FollowDomManager(scene);
     }
 
     abstract onStart(): void;
     abstract onStop(): void;
 
     start() {
-        if (!this._started){
-            this.scene.defaultCursor= "crosshair";
+        if (!this._started) {
             this.onStart();
         }
-           
     }
 
     stop(): void {
         if (this._started) {
-            this.scene.defaultCursor= "default";
             this.onStop();
         }
     }
@@ -41,6 +40,7 @@ export abstract class AbstractMeasure implements IMeasure {
         this.meshes.forEach(mesh => {
             this.scene.removeMesh(mesh);
         });
+        this.followDomManager.clear();
     }
 
     setVisible(value: boolean) {
