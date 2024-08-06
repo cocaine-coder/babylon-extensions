@@ -2,6 +2,13 @@ import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
 export interface MeasureLineOptions {
     scene: BABYLON.Scene;
+    style?: {
+        color?: string;
+        size?: number;
+        lineColor?: BABYLON.Color4;
+    };
+
+    format?: (length: number) => string;
 }
 
 export class MeasureLine extends AbstractMeasure {
@@ -11,8 +18,14 @@ export class MeasureLine extends AbstractMeasure {
     /**
      *
      */
-    constructor(options: MeasureLineOptions) {
+    constructor(private options: MeasureLineOptions) {
         super(options.scene);
+
+        options.style ??= {};
+        options.style.color ??= "white";
+        options.style.size ??= 14;
+        options.style.lineColor ??= new BABYLON.Color4(1, 0, 0, 1);
+        options.format ??= (length: number) => length.toFixed(2) + "m";
     }
 
     onStart(): void {
@@ -21,9 +34,9 @@ export class MeasureLine extends AbstractMeasure {
             points: new Array<BABYLON.Vector3>(),
             updatable: true,
             colors: [
-                new BABYLON.Color4(1, 0, 0, 1),
-                new BABYLON.Color4(1, 0, 0, 1),
-                new BABYLON.Color4(1, 0, 0, 1)
+                this.options.style!.lineColor!,
+                this.options.style!.lineColor!,
+                this.options.style!.lineColor!,
             ]
         } as {
             id: string | undefined,
@@ -78,9 +91,9 @@ export class MeasureLine extends AbstractMeasure {
                         points.pop();
                         points.push(position);
 
-                        const distance = BABYLON.Vector3.Distance(points[0], points[1]).toFixed(2) + " m";
+                        const distance = BABYLON.Vector3.Distance(points[0], points[1]);
                         this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
-                            x.wapper.innerText = distance;
+                            x.wapper.innerText = this.options.format!(distance);
                             x.setPosition(points[0].add(points[1]).scale(0.5));
                         });
                         this.meshes.push(linesMeshOptions.instance!);
@@ -90,7 +103,11 @@ export class MeasureLine extends AbstractMeasure {
                         points.length = 0;
                     } else {
                         linesMeshOptions.id = BABYLON.GUID.RandomId();
-                        this.followDomManager.set(linesMeshOptions.id, "", position);
+                        const el = this.followDomManager.set(linesMeshOptions.id, "", position);
+                        el.wapper.style.pointerEvents = 'none';
+                        el.wapper.style.fontSize = this.options.style!.size! + "px";
+                        el.wapper.style.backgroundColor = "rgba(31,31,31,0.3)";
+                        el.wapper.style.paddingInline = "4px";
                         points.push(position);
                     }
                 }
@@ -113,9 +130,9 @@ export class MeasureLine extends AbstractMeasure {
                 linesMeshOptions.instance.isPickable = false;
                 linesMeshOptions.instance.renderingGroupId = 1;
 
-                const distance = BABYLON.Vector3.Distance(points[0], points[1]).toFixed(2) + " m";
+                const distance = BABYLON.Vector3.Distance(points[0], points[1]);
                 this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
-                    x.wapper.innerText = distance;
+                    x.wapper.innerText = this.options.format!(distance);
                     x.setPosition(points[0].add(points[1]).scale(0.5));
                 });
             }

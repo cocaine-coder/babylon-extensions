@@ -5,6 +5,7 @@ export interface MeasurePointOptions {
     scene: BABYLON.Scene;
     style?: {
         color?: string;
+        size? : number;
         iconColor?: string;
     }
 
@@ -22,6 +23,7 @@ export class MeasurePoint extends AbstractMeasure {
 
         options.style ??= {};
         options.style.color ??= "white";
+        options.style.size ??= 14;
         options.style.iconColor ??= "red";
         options.format ??= (position:BABYLON.Vector3) => position.y.toFixed(2) + "m";
     }
@@ -75,6 +77,8 @@ export class MeasurePoint extends AbstractMeasure {
 
                     const el = this.followDomManager.set(BABYLON.GUID.RandomId(), div, position);
                     el.wapper.style.transform = "translate(-7px, -100%)";
+                    el.wapper.style.pointerEvents = 'none';
+                    el.wapper.style.fontSize = this.options.style!.size! + "px";
                 }
 
                 isDrag = false;
