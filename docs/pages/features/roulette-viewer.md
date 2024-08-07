@@ -1,12 +1,16 @@
+## 说明
+
+这是一个控制`ArcRotateCamera`视图朝向的控件，UI 抄的 blender。
+
+键盘输入 \` （esc 下面，tab 上面那个键）唤醒轮盘控件。再次点击 \` 或者点击esc 取消操作。
+
+你会感到很别扭，因为这个轮盘上面缺了一角（右下角），我实在想不出要加入什么操作，你可以参照 api 参数自行填充该位置控件，如：飞入到所选择的位置，但是需要自己实现该功能。
+
 ## 示例
 
 <RouletteViewer></RouletteViewer>
 
-## 说明
-
-这是一个控制`ArcRotateCamera`视图朝向的控件，UI 抄的 blender。键盘输入 ` （esc 下面，tab 上面那个键）唤醒轮盘控件。你会感到很别扭，因为这个轮盘上面缺了一角（右下角），我实在想不出要加入什么操作，你可以参照 api 参数自行填充该位置控件，如：飞入到所选择的位置，但是需要自己实现该功能。
-
-## 编码示例
+## 编码
 
 ```ts
 const viewer = new RouletteViewer({
@@ -19,8 +23,7 @@ const viewer = new RouletteViewer({
 
 ## 参数
 
-`RouletteViewerOptions`
-
+`RouletteViewerOptions`  
 | 参数         | 类型                      | 必填 | 默认值 | 说明       |
 | ------------ | ------------------------- | ---- | ------ | ---------- |
 | camera       | `BABYLON.ArcRotateCamera` | 是   |        | 圆弧相机   |

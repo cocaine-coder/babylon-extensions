@@ -28,7 +28,7 @@ export class MeasurePoint extends AbstractMeasure {
         options.format ??= (position:BABYLON.Vector3) => position.y.toFixed(2) + "m";
     }
 
-    onStart(): void {
+    protected onStart(): void {
         let timer: number | undefined;
         let isDrag = false;
 
@@ -85,7 +85,7 @@ export class MeasurePoint extends AbstractMeasure {
             }
         });
     }
-    onStop(): void {
+    protected onStop(): void {
         if (this.pointerObserver)
             this.scene.onPointerObservable.remove(this.pointerObserver);
     }

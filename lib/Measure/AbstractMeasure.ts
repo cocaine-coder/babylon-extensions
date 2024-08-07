@@ -21,8 +21,8 @@ export abstract class AbstractMeasure implements IMeasure {
         this.followDomManager = new FollowDomManager(scene);
     }
 
-    abstract onStart(): void;
-    abstract onStop(): void;
+    protected abstract onStart(): void;
+    protected abstract onStop(): void;
 
     start() {
         if (!this._started) {

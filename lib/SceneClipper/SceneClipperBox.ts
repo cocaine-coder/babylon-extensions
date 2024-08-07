@@ -2,10 +2,15 @@ import * as BABYLON from '@babylonjs/core';
 import { AbstractSceneClipper } from './AbstractSceneClipper';
 import { Utils } from '../utils';
 
+export interface SceneClipperBoxOptions {
+    scene: BABYLON.Scene;
+    filter?: (mesh: BABYLON.AbstractMesh) => boolean
+}
+
 export class SceneClipperBox extends AbstractSceneClipper {
 
-    constructor(scene: BABYLON.Scene, private filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
-        super(scene);
+    constructor(private options: SceneClipperBoxOptions) {
+        super(options.scene, options.filter);
     }
 
     setAuxiliaryMeshOpacity(value: number) {
@@ -50,7 +55,7 @@ export class SceneClipperBox extends AbstractSceneClipper {
     }
 
     protected setClipperEnable(value: boolean) {
-        this._gizmoManager.boundingBoxGizmoEnabled = value;
+        this.gizmoManager.boundingBoxGizmoEnabled = value;
         const meshes = this.filter ? this.scene.meshes.filter(this.filter) : this.scene.meshes;
 
         if (value) {

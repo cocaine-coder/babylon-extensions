@@ -28,7 +28,7 @@ export class MeasureLine extends AbstractMeasure {
         options.format ??= (length: number) => length.toFixed(2) + "m";
     }
 
-    onStart(): void {
+    protected onStart(): void {
 
         const linesMeshOptions = {
             points: new Array<BABYLON.Vector3>(),
@@ -139,7 +139,7 @@ export class MeasureLine extends AbstractMeasure {
         });
     }
 
-    onStop(): void {
+    protected onStop(): void {
         if (this.pointerObserver)
             this.scene.onPointerObservable.remove(this.pointerObserver);
     }
