@@ -1,14 +1,8 @@
 <template>
-    <BabylonScene :onload="onLoad"></BabylonScene>
+    <Measure :measure-creator="scene => new MeasurePoint({ scene })"></Measure>
 </template>
 
 <script setup lang="ts">
 import { MeasurePoint } from '../../../../lib';
-import BabylonScene from '../../base/BabylonScene.vue';
-import * as BABYLON from '@babylonjs/core';
-
-function onLoad(scene: BABYLON.Scene){
-    const measure = new MeasurePoint({scene});
-    measure.start();
-}
+import Measure from './Measure.vue';
 </script>

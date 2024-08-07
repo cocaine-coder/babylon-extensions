@@ -28,12 +28,16 @@ export abstract class AbstractMeasure implements IMeasure {
         if (!this._started) {
             this.onStart();
         }
+
+        this._started = true;
     }
 
     stop(): void {
         if (this._started) {
             this.onStop();
         }
+
+        this._started = false;
     }
 
     clear() {
