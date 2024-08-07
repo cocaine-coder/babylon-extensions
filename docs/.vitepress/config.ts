@@ -31,6 +31,10 @@ export default {
                 base: "/pages/features/",
                 items: [
                     {
+                        text: "视图转盘",
+                        link : "roulette-viewer"
+                    },
+                    {
                         text: "切割",
                         items: [
                             { text: "盒子切割", link: 'clipper/box' }
