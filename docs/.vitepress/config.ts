@@ -1,4 +1,48 @@
-import { UserConfig, DefaultTheme } from 'vitepress';
+import { readFileSync, writeFileSync } from 'fs';
+import { UserConfig, DefaultTheme, Plugin } from 'vitepress';
+
+function serialize(obj, name) {
+    var result = "";
+    function serializeInternal(o, path) {
+        for (const p in o) {
+            var value = o[p];
+            if (typeof value != "object") {
+                if (typeof value == "string") {
+                    result += "\n" + path + "[" + (isNaN(p as any) ? "\"" + p + "\"" : p) + "] = " + "\"" + value.replace(/\"/g, "\\\"") + "\"" + ";";
+                } else {
+                    result += "\n" + path + "[" + (isNaN(p as any) ? "\"" + p + "\"" : p) + "] = " + value + ";";
+                }
+            }
+            else {
+                if (Array.isArray(value)) {
+                    result += "\n" + path + "[" + (isNaN(p as any) ? "\"" + p + "\"" : p) + "]" + "=" + "new Array();";
+                    serializeInternal(value, path + "[" + (isNaN(p as any) ? "\"" + p + "\"" : p) + "]");
+                } else {
+                    result += "\n" + path + "[" + (isNaN(p as any) ? "\"" + p + "\"" : p) + "]" + "=" + "new Object();";
+                    serializeInternal(value, path + "[" + (isNaN(p as any) ? "\"" + p + "\"" : p) + "]");
+                }
+            }
+        }
+    }
+    serializeInternal(obj, name);
+    return result;
+}
+
+const FilterDataJSPlugin = {
+    apply: (c, e) => {
+        c.plugins?.forEach((p: any) => {
+            if (p["name"] === "vitepress:data") {
+                const orgLoad = p.load;
+                p.load = async (id: string) => {
+                    if(id.endsWith("KHR_animation_pointer.data.js"))
+                        return;
+                    
+                    await orgLoad(id);
+                }
+            }
+        });
+    }
+} as Plugin;
 
 export default {
     title: 'babylon-toolkits',
@@ -32,7 +76,7 @@ export default {
                 items: [
                     {
                         text: "视图转盘",
-                        link : "roulette-viewer"
+                        link: "roulette-viewer"
                     },
                     {
                         text: "切割",
@@ -50,5 +94,8 @@ export default {
             }
         ],
         socialLinks: [{ icon: 'github', link: "https://github.com/cocaine-coder/babylon-toolkits" }],
+    },
+    vite: {
+        'plugins': [FilterDataJSPlugin]
     }
 } as UserConfig<DefaultTheme.Config>
