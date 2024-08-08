@@ -108,6 +108,7 @@ export class MeasureLine extends AbstractMeasure {
                         el.wapper.style.fontSize = this.options.style!.size! + "px";
                         el.wapper.style.backgroundColor = "rgba(31,31,31,0.3)";
                         el.wapper.style.paddingInline = "4px";
+                        el.wapper.style.color = 'white';
                         points.push(position);
                     }
                 }

@@ -1,4 +1,5 @@
 import * as BABYLON from '@babylonjs/core';
+import { Utils } from './utils';
 
 export interface FollowCameraDomElementOptions {
     id: string;
@@ -67,7 +68,7 @@ export class FollowCameraDomElement {
 }
 
 export class FollowDomManager {
-    private readonly _containerId = "follow-dom-container";
+    private readonly _containerId = "babylonjs-follow-dom-container";
     private _container: HTMLDivElement;
     private _elements: FollowCameraDomElement[] = []
 
@@ -105,11 +106,15 @@ export class FollowDomManager {
     private createContainer() {
         let div = document.getElementById(this._containerId) as HTMLDivElement | undefined;
         if (!div) {
-            div = document.createElement('div');
-            div.id = this._containerId;
-
-            div.style.position = 'relative';
-            div.style.overflow = 'hidden';
+            div = Utils.createElement('div', {
+                id : this._containerId,
+                style : {
+                    position : 'relative',
+                    overflow : 'hidden',
+                    width : '100%',
+                    height : '100%'
+                }
+            });
 
             const canvas = this.scene.getEngine().getRenderingCanvas()!;
             canvas.parentElement?.insertBefore(div, canvas);
