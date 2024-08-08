@@ -45,10 +45,10 @@ const FilterDataJSPlugin = {
 } as Plugin;
 
 export default {
-    title: 'babylon-toolkits',
+    title: 'babylonjs-toolkits',
     description: 'babylonjs 小工具',
     appearance: 'dark',
-    base: '/babylon-toolkits/',
+    base: '/babylonjs-toolkits/',
     head: [
         [
             'link', { rel: 'icon', href: '/logo.svg' }
@@ -93,7 +93,7 @@ export default {
                 ]
             }
         ],
-        socialLinks: [{ icon: 'github', link: "https://github.com/cocaine-coder/babylon-toolkits" }],
+        socialLinks: [{ icon: 'github', link: "https://github.com/cocaine-coder/babylonjs-toolkits" }],
     },
     vite: {
         'plugins': [FilterDataJSPlugin]

@@ -1,7 +1,7 @@
 {
-  "name": "babylon-toolkits",
+  "name": "babylonjs-toolkits",
   "version": "1.0.0",
-  "repository": "https://github.com/cocaine-coder/babylon-toolkits.git",
+  "repository": "https://github.com/cocaine-coder/babylonjs-toolkits.git",
   "author": "cocaine_coder <tracywang1997@outlook.com>",
   "license": "MIT",
   "main": "./dist/index.es.js",
