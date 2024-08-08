@@ -255,8 +255,8 @@ export class RouletteViewer {
                 const button = buttons[that.hoverBtnIndex];
 
                 Utils.zoomArcRotateCameraToAll(options.camera, {
-                    alpha: button.alpha,
-                    beta: button.beta
+                    alpha: button?.alpha,
+                    beta: button?.beta
                 });
             }
         }

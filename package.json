@@ -4,6 +4,8 @@
   "repository": "https://github.com/cocaine-coder/babylon-toolkits.git",
   "author": "cocaine_coder <tracywang1997@outlook.com>",
   "license": "MIT",
+  "main": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "vite build",
     "test": "vitest run",
