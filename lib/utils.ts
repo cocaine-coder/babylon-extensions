@@ -69,9 +69,7 @@ export namespace Utils {
                 if (i0 < 0.00001)
 
                     return false;
-
-
-                console.log(clipPlanes);
+                    
                 if (clipPlanes.length == 0)
                     return true;
 
