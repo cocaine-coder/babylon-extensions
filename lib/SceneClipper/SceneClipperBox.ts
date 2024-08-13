@@ -51,6 +51,8 @@ export class SceneClipperBox extends AbstractSceneClipper {
         gizmoManager.enableAutoPicking = false;
         gizmoManager.boundingBoxDragBehavior.disableMovement = true;
 
+        gizmoManager.boundingBoxGizmoEnabled = false;
+
         return gizmoManager;
     }
 

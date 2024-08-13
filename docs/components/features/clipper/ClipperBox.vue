@@ -28,7 +28,7 @@ import { ref, watch } from 'vue';
 import BabylonScene from '../../base/BabylonScene.vue';
 import { SceneClipperBox, RouletteViewer } from '../../../../lib';
 
-const enable = ref(true);
+const enable = ref(false);
 const gizmo = ref(true);
 const opacity = ref(0.2);
 let clipper: SceneClipperBox;
@@ -49,7 +49,7 @@ function onLoaded(scene: BABYLON.Scene) {
     clipper = new SceneClipperBox({
         scene
     });
-    clipper.setEnable(true);
+    // clipper.setEnable(true);
 
     new RouletteViewer({
         camera: scene.activeCamera as BABYLON.ArcRotateCamera,
