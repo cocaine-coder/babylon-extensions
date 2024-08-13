@@ -1,15 +1,17 @@
 import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
+import { Utils } from '../utils';
 
 export interface MeasurePointOptions {
     scene: BABYLON.Scene;
     style?: {
         color?: string;
-        size? : number;
+        size?: number;
         iconColor?: string;
     }
 
     format?: (position: BABYLON.Vector3) => string;
+    clipPlanes?: BABYLON.Plane[];
 }
 
 export class MeasurePoint extends AbstractMeasure {
@@ -25,7 +27,7 @@ export class MeasurePoint extends AbstractMeasure {
         options.style.color ??= "white";
         options.style.size ??= 14;
         options.style.iconColor ??= "red";
-        options.format ??= (position:BABYLON.Vector3) => position.y.toFixed(2) + "m";
+        options.format ??= (position: BABYLON.Vector3) => position.y.toFixed(2) + "m";
     }
 
     protected onStart(): void {
@@ -59,12 +61,14 @@ export class MeasurePoint extends AbstractMeasure {
             else if (e.type === BABYLON.PointerEventTypes.POINTERUP) {
                 if (timer) clearTimeout(timer);
 
-                if (!isDrag &&
-                    e.pickInfo &&
-                    e.pickInfo.pickedPoint &&
-                    e.pickInfo.pickedMesh) {
+                const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
 
-                    const position = e.pickInfo.pickedPoint;
+                if (!isDrag &&
+                    pickInfo &&
+                    pickInfo.pickedPoint &&
+                    pickInfo.pickedMesh) {
+
+                    const position = pickInfo.pickedPoint;
 
                     const div = document.createElement('div');
                     div.innerHTML = `

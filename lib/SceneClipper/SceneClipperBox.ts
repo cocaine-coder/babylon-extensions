@@ -95,6 +95,13 @@ export class SceneClipperBox extends AbstractSceneClipper {
                     scene.clipPlane4 = BABYLON.Plane.FromPositionAndNormal(yMin.multiply(box.scaling).add(box.position), box.up.multiply(new BABYLON.Vector3(-1, -1, -1)));
                     scene.clipPlane5 = BABYLON.Plane.FromPositionAndNormal(xMax.multiply(box.scaling).add(box.position), box.right);
                     scene.clipPlane6 = BABYLON.Plane.FromPositionAndNormal(xMin.multiply(box.scaling).add(box.position), box.right.multiply(new BABYLON.Vector3(-1, -1, -1)));
+
+                    this.clipPlanes[0] = scene.clipPlane;
+                    this.clipPlanes[1] = scene.clipPlane2;
+                    this.clipPlanes[2] = scene.clipPlane3;
+                    this.clipPlanes[3] = scene.clipPlane4;
+                    this.clipPlanes[4] = scene.clipPlane5;
+                    this.clipPlanes[5] = scene.clipPlane6;
                 });
 
                 m.onAfterRenderObservable.add(() => {

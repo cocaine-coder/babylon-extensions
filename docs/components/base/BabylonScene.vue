@@ -43,7 +43,10 @@ onMounted(() => {
     const camera = scene.activeCamera as BABYLON.ArcRotateCamera;
     camera.attachControl(engine.getRenderingCanvas(), true);
 
-    BABYLON.SceneLoader.AppendAsync("", new URL(url_monkey, import.meta.url).href, scene).then(() => {
+    BABYLON.SceneLoader.LoadAssetContainerAsync("", new URL(url_monkey, import.meta.url).href, scene).then(c => {
+        c.addAllToScene();
+        c.createRootMesh().clone().position.y += 3;
+
         const { worldSize, worldCenter } = Utils.getMeshesExtendsInfo(scene);
 
         const radius = worldSize.length() * 1.5;

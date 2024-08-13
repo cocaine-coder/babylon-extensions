@@ -1,5 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
+import { Utils } from '../utils';
 export interface MeasureLineOptions {
     scene: BABYLON.Scene;
     style?: {
@@ -9,6 +10,7 @@ export interface MeasureLineOptions {
     };
 
     format?: (length: number) => string;
+    clipPlanes?: BABYLON.Plane[];
 }
 
 export class MeasureLine extends AbstractMeasure {
@@ -76,14 +78,16 @@ export class MeasureLine extends AbstractMeasure {
             else if (e.type === BABYLON.PointerEventTypes.POINTERUP) {
                 if (timer) clearTimeout(timer);
 
+                const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
+
                 if (!isDrag &&
                     e.pickInfo &&
-                    e.pickInfo.pickedPoint &&
-                    e.pickInfo.pickedMesh &&
-                    e.pickInfo.pickedMesh !== linesMeshOptions.instance) {
+                    pickInfo.pickedPoint &&
+                    pickInfo.pickedMesh &&
+                    pickInfo.pickedMesh !== linesMeshOptions.instance) {
 
                     const points = linesMeshOptions.points;
-                    const position = e.pickInfo.pickedPoint;
+                    const position = pickInfo.pickedPoint;
 
                     // 结束本次测量，绘制测量数据
                     if (linesMeshOptions.points.length === 2) {
@@ -120,7 +124,7 @@ export class MeasureLine extends AbstractMeasure {
              * 鼠标移动绘制动态线
              */
             else if (e.type === BABYLON.PointerEventTypes.POINTERMOVE && linesMeshOptions.id) {
-                const pickInfo = this.scene.pick(this.scene.pointerX, this.scene.pointerY);
+                const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
                 if (!pickInfo || !pickInfo.pickedPoint) return;
 
                 const points = linesMeshOptions.points;

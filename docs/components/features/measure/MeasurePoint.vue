@@ -1,8 +1,15 @@
 <template>
-    <Measure :measure-creator="scene => new MeasurePoint({ scene })"></Measure>
+    <Measure :measure-creator="createMeasure"></Measure>
 </template>
 
 <script setup lang="ts">
-import { MeasurePoint } from '../../../../lib';
+import * as BABYLON from '@babylonjs/core';
+import { MeasurePoint, SceneClipperBox } from '../../../../lib';
 import Measure from './Measure.vue';
+
+function createMeasure(scene: BABYLON.Scene) {
+    const sceneClipperBox = new SceneClipperBox({ scene })
+    sceneClipperBox.setEnable(true);
+    return new MeasurePoint({ scene, clipPlanes: sceneClipperBox.clipPlanes });
+}
 </script>

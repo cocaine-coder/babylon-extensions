@@ -14,13 +14,14 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     private _originPosition: Array<number>;
     readonly gizmoManager: BABYLON.GizmoManager;
     readonly auxiliaryMesh: BABYLON.Mesh;
+    readonly clipPlanes: Array<BABYLON.Plane> = [];
 
     /**
      *
      */
-    constructor(protected scene: BABYLON.Scene, protected filter? : (mesh: BABYLON.AbstractMesh) => boolean) {
-        this.auxiliaryMesh = this.createAuxiliaryMesh(); 
-        this.auxiliaryMesh.isPickable = false; 
+    constructor(protected scene: BABYLON.Scene, protected filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
+        this.auxiliaryMesh = this.createAuxiliaryMesh();
+        this.auxiliaryMesh.isPickable = false;
         this._originPosition = this.auxiliaryMesh.position.asArray();
         this.gizmoManager = this.createGizmoManager(this.auxiliaryMesh);
 
@@ -36,17 +37,15 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     abstract setAuxiliaryMeshOpacity(value: number): void;
 
     setEnable(value: boolean) {
-        if (this._disposed) return;
-        if (this._enable === value) return;
+        if (this._disposed || this._enable === value) return;
 
         this.auxiliaryMesh.isVisible = value;
-
         this.setClipperEnable(value);
         this._enable = value;
     }
 
     setGizmoMeshVisibility(visible: boolean) {
-        if (!this._enable) return;
+        if (this._disposed || !this._enable) return;
         const gizmos = this.gizmoManager.gizmos;
         this.setMeshVisibleRecursive(gizmos.boundingBoxGizmo?._rootMesh, visible);
         this.setMeshVisibleRecursive(gizmos.boundingBoxGizmo?._rootMesh, visible);
@@ -55,14 +54,17 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     }
 
     reset(): void {
+        if (this._disposed) return;
+
         this.auxiliaryMesh.position = new BABYLON.Vector3(this._originPosition[0], this._originPosition[1], this._originPosition[2]);
         this.auxiliaryMesh.rotation = BABYLON.Vector3.Zero();
         this.auxiliaryMesh.scaling = BABYLON.Vector3.One();
     }
 
     dispose(): void {
-        if(this._disposed) return;
+        if (this._disposed) return;
         this.setEnable(false);
+        this.clipPlanes.length = 0;
         this.scene.removeMesh(this.auxiliaryMesh, true);
         this.gizmoManager.dispose();
         this._disposed = true;
