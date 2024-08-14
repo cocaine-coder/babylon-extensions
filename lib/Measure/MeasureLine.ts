@@ -96,6 +96,10 @@ export class MeasureLine extends AbstractMeasure {
                         points.pop();
                         points.push(position);
 
+                        linesMeshOptions.instance = BABYLON.MeshBuilder.CreateLines(linesMeshOptions.id!, linesMeshOptions);
+                        linesMeshOptions.instance.isPickable = false;
+                        linesMeshOptions.instance.renderingGroupId = 1;
+
                         const distance = BABYLON.Vector3.Distance(points[0], points[1]);
                         this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
                             x.wapper.innerText = this.options.format!(distance);

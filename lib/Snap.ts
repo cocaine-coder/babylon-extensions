@@ -5,6 +5,7 @@ import { FollowDomManager } from './DomManager';
 export interface SnapOptions {
     scene: BABYLON.Scene,
     clipPlanes?: BABYLON.Plane[];
+    tolerance?: number;
 }
 
 export class Snap {
@@ -13,9 +14,11 @@ export class Snap {
     private _domManager: FollowDomManager;
 
     constructor(private options: SnapOptions) {
+        this.options.tolerance ??= 8;
+
         this._domManager = new FollowDomManager(this.options.scene);
         const wapper = this._domManager.set("snap-box", Utils.createElement('div', {
-            class : "snap-box-vertex",
+            class: "snap-box-vertex",
             style: {
                 width: "8px",
                 height: "8px",
@@ -24,7 +27,6 @@ export class Snap {
         }), new BABYLON.Vector3(0, 0, 0)).wapper;
         wapper.style.pointerEvents = 'none';
         wapper.className = "snap-box";
-
         this._domManager.setVisible(false);
     }
 
@@ -76,11 +78,29 @@ export class Snap {
                 const point = pickInfo.pickedPoint!;
                 let snapedPoint: BABYLON.Vector3 | undefined;
                 let minDistance = Number.MAX_VALUE;
+
+                const canvas = scene.getEngine().getRenderingCanvas()!;
+                const coordScalePoint = BABYLON.Vector3.Project(
+                    point,
+                    BABYLON.Matrix.Identity(),
+                    scene.getTransformMatrix(),
+                    scene.activeCamera!.viewport);
+                const top = canvas.clientHeight * coordScalePoint.y;
+                const left = canvas.clientWidth * coordScalePoint.x;
+
                 [p1, p2, p3].forEach(p => {
-                    const d = BABYLON.Vector3.Distance(point, p);
+                    const coordScale = BABYLON.Vector3.Project(
+                        p,
+                        BABYLON.Matrix.Identity(),
+                        scene.getTransformMatrix(),
+                        scene.activeCamera!.viewport);
+                    const top1 = canvas.clientHeight * coordScale.y;
+                    const left1 = canvas.clientWidth * coordScale.x;
+
+                    const d = Math.sqrt((top - top1) * (top - top1) + (left - left1) * (left - left1));
                     if (d < minDistance) {
                         minDistance = d;
-                        if (d < 0.01)
+                        if (d < this.options.tolerance!)
                             snapedPoint = p;
                     }
                 });
