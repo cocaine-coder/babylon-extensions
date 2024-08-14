@@ -63,21 +63,15 @@ export class Snap {
             const point = pickInfo.pickedPoint;
 
             if (point && mesh && mesh instanceof BABYLON.Mesh) {
-                const vertexData = BABYLON.VertexData.ExtractFromMesh(mesh).clone().transform(mesh.getWorldMatrix());
-                const positions = vertexData.positions!;
-                const indices = vertexData.indices!;
+                const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind)!;
+                const indices = mesh.getIndices()!;
 
                 const i1 = indices[faceId * 3];
                 const i2 = indices[faceId * 3 + 1];
                 const i3 = indices[faceId * 3 + 2];
-
-                const p1 = new BABYLON.Vector3(positions[i1 * 3], positions[i1 * 3 + 1], positions[i1 * 3 + 2]);
-                const p2 = new BABYLON.Vector3(positions[i2 * 3], positions[i2 * 3 + 1], positions[i2 * 3 + 2]);
-                const p3 = new BABYLON.Vector3(positions[i3 * 3], positions[i3 * 3 + 1], positions[i3 * 3 + 2]);
-
-                const point = pickInfo.pickedPoint!;
-                let snapedPoint: BABYLON.Vector3 | undefined;
-                let minDistance = Number.MAX_VALUE;
+                const p1 = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(positions[i1 * 3], positions[i1 * 3 + 1], positions[i1 * 3 + 2]), mesh.getWorldMatrix());
+                const p2 = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(positions[i2 * 3], positions[i2 * 3 + 1], positions[i2 * 3 + 2]), mesh.getWorldMatrix());
+                const p3 = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(positions[i3 * 3], positions[i3 * 3 + 1], positions[i3 * 3 + 2]), mesh.getWorldMatrix());
 
                 const canvas = scene.getEngine().getRenderingCanvas()!;
                 const coordScalePoint = BABYLON.Vector3.Project(
@@ -87,6 +81,9 @@ export class Snap {
                     scene.activeCamera!.viewport);
                 const top = canvas.clientHeight * coordScalePoint.y;
                 const left = canvas.clientWidth * coordScalePoint.x;
+
+                let snapedPoint: BABYLON.Vector3 | undefined;
+                let minDistance = Number.MAX_VALUE;
 
                 [p1, p2, p3].forEach(p => {
                     const coordScale = BABYLON.Vector3.Project(
