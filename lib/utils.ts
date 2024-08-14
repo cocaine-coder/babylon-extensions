@@ -58,10 +58,10 @@ export namespace Utils {
                 }
                 return mesh.isPickable;
             },
-             false,
              undefined,
-            // // TRIANGLE PREDICATE
-
+             undefined,
+            
+             // TRIANGLE PREDICATE
             (p0, p1, p2, ray, i0, i1, i2) => {
 
                 // fully transparent

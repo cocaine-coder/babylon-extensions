@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
 import { Utils } from '../utils';
+import { Snap } from '../Snap';
 export interface MeasureLineOptions {
     scene: BABYLON.Scene;
     style?: {
@@ -11,6 +12,7 @@ export interface MeasureLineOptions {
 
     format?: (length: number) => string;
     clipPlanes?: BABYLON.Plane[];
+    snap?: Snap;
 }
 
 export class MeasureLine extends AbstractMeasure {
@@ -21,7 +23,7 @@ export class MeasureLine extends AbstractMeasure {
      *
      */
     constructor(private options: MeasureLineOptions) {
-        super(options.scene);
+        super(options.scene, options.snap);
 
         options.style ??= {};
         options.style.color ??= "white";
@@ -31,7 +33,6 @@ export class MeasureLine extends AbstractMeasure {
     }
 
     protected onStart(): void {
-
         const linesMeshOptions = {
             points: new Array<BABYLON.Vector3>(),
             updatable: true,
@@ -87,7 +88,7 @@ export class MeasureLine extends AbstractMeasure {
                     pickInfo.pickedMesh !== linesMeshOptions.instance) {
 
                     const points = linesMeshOptions.points;
-                    const position = pickInfo.pickedPoint;
+                    const position = this.snap?.snapPoint ? this.snap?.snapPoint : pickInfo.pickedPoint;
 
                     // 结束本次测量，绘制测量数据
                     if (linesMeshOptions.points.length === 2) {

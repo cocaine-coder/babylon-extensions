@@ -9,3 +9,5 @@ export * from './Measure/MeasurePoint';
 export * from './SceneClipper/AbstractSceneClipper';
 export * from './SceneClipper/SceneClipperBox';
 export * from './RouletteViewer';
+
+export * from './Snap';

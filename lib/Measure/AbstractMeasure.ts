@@ -1,5 +1,6 @@
 import * as BABYLON from "@babylonjs/core";
 import { FollowDomManager } from "../DomManager";
+import { Snap } from "../Snap";
 
 export interface IMeasure {
     start(): void;
@@ -12,12 +13,12 @@ export interface IMeasure {
 export abstract class AbstractMeasure implements IMeasure {
     private _started = false;
     protected meshes = new Array<BABYLON.AbstractMesh>();
-    protected followDomManager : FollowDomManager;
+    protected followDomManager: FollowDomManager;
 
     /**
      *
      */
-    constructor(protected scene: BABYLON.Scene) {
+    constructor(protected scene: BABYLON.Scene, protected snap?: Snap) {
         this.followDomManager = new FollowDomManager(scene);
     }
 
@@ -26,6 +27,7 @@ export abstract class AbstractMeasure implements IMeasure {
 
     start() {
         if (!this._started) {
+            this.snap?.start();
             this.onStart();
         }
 
@@ -34,6 +36,7 @@ export abstract class AbstractMeasure implements IMeasure {
 
     stop(): void {
         if (this._started) {
+            this.snap?.stop();
             this.onStop();
         }
 
@@ -56,6 +59,7 @@ export abstract class AbstractMeasure implements IMeasure {
 
     dispose() {
         this.stop();
+        this.snap?.stop();
         this.clear();
     }
 }

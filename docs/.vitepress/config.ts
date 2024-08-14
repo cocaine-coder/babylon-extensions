@@ -34,9 +34,9 @@ const FilterDataJSPlugin = {
             if (p["name"] === "vitepress:data") {
                 const orgLoad = p.load;
                 p.load = async (id: string) => {
-                    if(id.endsWith("KHR_animation_pointer.data.js"))
+                    if (id.endsWith("KHR_animation_pointer.data.js"))
                         return;
-                    
+
                     await orgLoad(id);
                 }
             }
@@ -89,6 +89,9 @@ export default {
                             { text: "点", link: 'measure/point' },
                             { text: "长度", link: 'measure/length' }
                         ]
+                    }, {
+                        text: "捕捉",
+                        link: "snap"
                     }
                 ]
             }

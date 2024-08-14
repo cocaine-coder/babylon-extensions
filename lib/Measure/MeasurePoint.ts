@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import { AbstractMeasure } from "./AbstractMeasure";
 import { Utils } from '../utils';
+import { Snap } from '../Snap';
 
 export interface MeasurePointOptions {
     scene: BABYLON.Scene;
@@ -12,6 +13,7 @@ export interface MeasurePointOptions {
 
     format?: (position: BABYLON.Vector3) => string;
     clipPlanes?: BABYLON.Plane[];
+    snap?: Snap;
 }
 
 export class MeasurePoint extends AbstractMeasure {
@@ -21,7 +23,7 @@ export class MeasurePoint extends AbstractMeasure {
      *
      */
     constructor(private options: MeasurePointOptions) {
-        super(options.scene);
+        super(options.scene, options.snap);
 
         options.style ??= {};
         options.style.color ??= "white";
@@ -68,7 +70,7 @@ export class MeasurePoint extends AbstractMeasure {
                     pickInfo.pickedPoint &&
                     pickInfo.pickedMesh) {
 
-                    const position = pickInfo.pickedPoint;
+                    const position = this.snap?.snapPoint ? this.snap.snapPoint : pickInfo.pickedPoint;
 
                     const div = document.createElement('div');
                     div.innerHTML = `
