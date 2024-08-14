@@ -120,6 +120,7 @@ export class Snap {
     stop() {
         if (this._obs) {
             this.options.scene.onPointerObservable.remove(this._obs);
+            this._obs = undefined;
         }
     }
 }
