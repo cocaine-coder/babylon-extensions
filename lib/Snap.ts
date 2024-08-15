@@ -94,10 +94,12 @@ export class Snap {
                     const top1 = canvas.clientHeight * coordScale.y;
                     const left1 = canvas.clientWidth * coordScale.x;
 
-                    const d = Math.sqrt((top - top1) * (top - top1) + (left - left1) * (left - left1));
+                    const dertTop = Math.abs(top - top1);
+                    const dertLeft = Math.abs(left - left1);
+                    const d = Math.sqrt(Math.pow(dertTop, 2) + Math.pow(dertLeft, 2));
                     if (d < minDistance) {
                         minDistance = d;
-                        if (d < this.options.tolerance!)
+                        if (dertTop < this.options.tolerance! && dertLeft < this.options.tolerance!)
                             snapedPoint = p;
                     }
                 });

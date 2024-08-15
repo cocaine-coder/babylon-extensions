@@ -22,6 +22,14 @@ function onWindowResize() {
 }
 
 onMounted(() => {
+    document.getElementById("babylon-container")?.addEventListener('mouseenter', e => {
+        document.body.style.overflow = 'hidden';
+    });
+
+    document.getElementById("babylon-container")?.addEventListener('mouseout', e => {
+        document.body.style.overflow = 'auto';
+    });
+
     BABYLON.SceneLoader.RegisterPlugin(new GLTFFileLoader());
     engine = new BABYLON.Engine(document.getElementById("babylon-container")! as HTMLCanvasElement, true, {
         adaptToDeviceRatio: true,
