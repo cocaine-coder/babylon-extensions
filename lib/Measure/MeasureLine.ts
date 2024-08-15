@@ -39,7 +39,6 @@ export class MeasureLine extends AbstractMeasure {
             colors: [
                 this.options.style!.lineColor!,
                 this.options.style!.lineColor!,
-                this.options.style!.lineColor!,
             ]
         } as {
             id: string | undefined,
@@ -77,15 +76,17 @@ export class MeasureLine extends AbstractMeasure {
              * 3 重置isDrag状态
              */
             else if (e.type === BABYLON.PointerEventTypes.POINTERUP) {
-                if (timer) clearTimeout(timer);
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = undefined;
+                }
 
                 const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
 
                 if (!isDrag &&
                     e.pickInfo &&
                     pickInfo.pickedPoint &&
-                    pickInfo.pickedMesh &&
-                    pickInfo.pickedMesh !== linesMeshOptions.instance) {
+                    pickInfo.pickedMesh) {
 
                     const points = linesMeshOptions.points;
                     const position = this.snap?.snapPoint ? this.snap?.snapPoint : pickInfo.pickedPoint;

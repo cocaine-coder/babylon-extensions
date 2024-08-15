@@ -8,6 +8,6 @@ import { Snap } from '../../../lib';
 
 function onload(scene: BABYLON.Scene) {
     // BABYLON.MeshBuilder.CreateBox("", { size: 3 })
-    new Snap({ scene }).start();
+    new Snap({ scene, tolerance: 12 }).start();
 }
 </script>

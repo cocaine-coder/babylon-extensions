@@ -10,31 +10,56 @@
             <button style="border: 2px solid #a8b1ff; padding: 0 4px;" @click="measure.clear()">清空</button>
         </div>
     </div>
+
+    <ClipperBoxParams v-if="clipper" :clipper="clipper"></ClipperBoxParams>
+
+    <div class="params">
+        <div>
+            <label>允许捕捉</label>
+            <input type="checkbox" v-model="allowSnap">
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref , watch } from 'vue';
-import { IMeasure } from '../../../../lib';
+import { ref, watch } from 'vue';
+import { IMeasure, SceneClipperBox, Snap } from '../../../../lib';
 import BabylonScene from '../../base/BabylonScene.vue';
+import ClipperBoxParams from '../common/ClipperBoxParams.vue';
 import * as BABYLON from '@babylonjs/core';
 
-const enable = ref(true);
 const props = defineProps<{
-    measureCreator: (scene:BABYLON.Scene)=> IMeasure
+    measureCreator: (scene: BABYLON.Scene, clipper: SceneClipperBox, snap: Snap) => IMeasure,
 }>();
 
-let measure : IMeasure;
+const enable = ref(true);
+const clipper = ref<SceneClipperBox>();
+const allowSnap = ref(false);
 
-watch(enable,a=>{
-    if(a){
+let measure: IMeasure;
+let snap: Snap;
+
+watch(enable, a => {
+    if (a) {
         measure.start();
-    }else{
+    } else {
         measure.stop();
     }
 });
 
-function onLoad(scene: BABYLON.Scene){
-    measure = props.measureCreator(scene);
+watch(allowSnap, a => {
+    a ? snap.start() : snap.stop();
+});
+
+function onLoad(scene: BABYLON.Scene) {
+    clipper.value = new SceneClipperBox({
+        scene,
+    });
+    snap = new Snap({
+        scene,
+        clipPlanes: clipper.value.clipPlanes
+    });
+    measure = props.measureCreator(scene, clipper.value, snap);
     measure.start();
 }
 </script>

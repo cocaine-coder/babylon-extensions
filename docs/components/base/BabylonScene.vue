@@ -78,7 +78,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style>
 #babylon-container {
     width: 100%;
     height: 100%;
@@ -86,5 +86,9 @@ onUnmounted(() => {
 
 #babylon-container:focus-visible {
     outline: none !important;
+}
+
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 </style>

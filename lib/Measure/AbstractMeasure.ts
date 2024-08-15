@@ -27,7 +27,6 @@ export abstract class AbstractMeasure implements IMeasure {
 
     start() {
         if (!this._started) {
-            this.snap?.start();
             this.onStart();
         }
 
@@ -36,7 +35,6 @@ export abstract class AbstractMeasure implements IMeasure {
 
     stop(): void {
         if (this._started) {
-            this.snap?.stop();
             this.onStop();
         }
 
@@ -57,9 +55,12 @@ export abstract class AbstractMeasure implements IMeasure {
         this.followDomManager.setVisible(value);
     }
 
+    setSnap(snap: Snap | false) {
+        this.snap = snap || undefined;
+    }
+
     dispose() {
         this.stop();
-        this.snap?.stop();
         this.clear();
     }
 }
