@@ -130,12 +130,17 @@ export class MeasureLine extends AbstractMeasure {
              * 鼠标移动绘制动态线
              */
             else if (e.type === BABYLON.PointerEventTypes.POINTERMOVE && linesMeshOptions.id) {
-                const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
-                if (!pickInfo || !pickInfo.pickedPoint) return;
+                let point = this.snap?.snapPoint;
+                if (!point) {
+                    const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
+                    if (!pickInfo || !pickInfo.pickedPoint) return;
+
+                    point = pickInfo.pickedPoint;
+                }
 
                 const points = linesMeshOptions.points;
                 if (points.length === 2) points.pop();
-                points.push(pickInfo.pickedPoint);
+                points.push(point);
 
                 linesMeshOptions.instance = BABYLON.MeshBuilder.CreateLines(linesMeshOptions.id, linesMeshOptions);
                 linesMeshOptions.instance.isPickable = false;
