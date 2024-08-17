@@ -25,8 +25,8 @@ export class SceneClipperBox extends AbstractSceneClipper {
 
         const { worldSize, worldCenter } = Utils.getMeshesExtendsInfo(scene, filter);
 
-        const material = new BABYLON.StandardMaterial("clip-box-material",
-            gizmoManager.utilityLayer.utilityLayerScene);
+        const gizmoScene = gizmoManager.utilityLayer.utilityLayerScene;
+        const material = new BABYLON.StandardMaterial("clip-box-material", gizmoScene);
         material.emissiveColor = new BABYLON.Color3(1, 1, 1);
         material.alpha = 0.2;
 
@@ -34,7 +34,7 @@ export class SceneClipperBox extends AbstractSceneClipper {
             width: worldSize.x,
             height: worldSize.y,
             depth: worldSize.z,
-        }, gizmoManager.utilityLayer.utilityLayerScene)!;
+        }, gizmoScene)!;
 
         box.position = worldCenter;
         box.material = material;

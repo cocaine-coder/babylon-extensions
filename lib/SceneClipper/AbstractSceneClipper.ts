@@ -23,13 +23,14 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
         this.gizmoManager = new BABYLON.GizmoManager(scene);
         this.gizmoManager.enableAutoPicking = false;
         this.gizmoManager.utilityLayer.utilityLayerScene.autoClearDepthAndStencil = false;
+        this.createGizmo(this.gizmoManager);
 
         this.auxiliaryMesh = this.createAuxiliaryMesh(this.gizmoManager);
         this.auxiliaryMesh.isPickable = false;
         this.auxiliaryMesh.isVisible = false;
         this._originPosition = this.auxiliaryMesh.position.asArray();
 
-        this.createGizmo(this.gizmoManager);
+
         this.gizmoManager.attachableMeshes = [this.auxiliaryMesh];
         this.gizmoManager.attachToMesh(this.auxiliaryMesh);
     }
