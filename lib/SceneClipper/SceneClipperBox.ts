@@ -9,7 +9,7 @@ export interface SceneClipperBoxOptions {
 
 export class SceneClipperBox extends AbstractSceneClipper {
 
-    constructor(private options: SceneClipperBoxOptions) {
+    constructor(options: SceneClipperBoxOptions) {
         super(options.scene, options.filter);
     }
 
@@ -19,13 +19,14 @@ export class SceneClipperBox extends AbstractSceneClipper {
         material.alpha = value;
     }
 
-    protected createAuxiliaryMesh(): BABYLON.Mesh {
+    protected createAuxiliaryMesh(gizmoManager: BABYLON.GizmoManager): BABYLON.Mesh {
         const scene = this.scene;
         const filter = this.filter;
 
         const { worldSize, worldCenter } = Utils.getMeshesExtendsInfo(scene, filter);
 
-        const material = new BABYLON.StandardMaterial("clip-box-material", scene);
+        const material = new BABYLON.StandardMaterial("clip-box-material",
+            gizmoManager.utilityLayer.utilityLayerScene);
         material.emissiveColor = new BABYLON.Color3(1, 1, 1);
         material.alpha = 0.2;
 
@@ -33,7 +34,7 @@ export class SceneClipperBox extends AbstractSceneClipper {
             width: worldSize.x,
             height: worldSize.y,
             depth: worldSize.z,
-        }, scene)!;
+        }, gizmoManager.utilityLayer.utilityLayerScene)!;
 
         box.position = worldCenter;
         box.material = material;
@@ -41,19 +42,11 @@ export class SceneClipperBox extends AbstractSceneClipper {
         return box;
     }
 
-    protected createGizmoManager(auxiliaryMesh: BABYLON.Mesh): BABYLON.GizmoManager {
-        const gizmoManager = new BABYLON.GizmoManager(this.scene);
+    protected createGizmo(gizmoManager: BABYLON.GizmoManager) {
         gizmoManager.boundingBoxGizmoEnabled = true;
-        gizmoManager.attachableMeshes = [auxiliaryMesh];
-        gizmoManager.attachToMesh(auxiliaryMesh);
         gizmoManager.gizmos.boundingBoxGizmo!.fixedDragMeshScreenSize = true;
-        gizmoManager.gizmos.boundingBoxGizmo!.fixedDragMeshBoundsSize = true;
-        gizmoManager.enableAutoPicking = false;
         gizmoManager.boundingBoxDragBehavior.disableMovement = true;
-
         gizmoManager.boundingBoxGizmoEnabled = false;
-
-        return gizmoManager;
     }
 
     protected setClipperEnable(value: boolean) {
