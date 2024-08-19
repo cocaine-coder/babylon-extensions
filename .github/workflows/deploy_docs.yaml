@@ -4,8 +4,7 @@ name: Deploy VitePress site to Pages
 
 on:
   push:
-    tags: # 当提交代码为tag触发 如 git push origin v0.1.0
-      - 'v*'
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
