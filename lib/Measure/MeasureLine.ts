@@ -13,6 +13,7 @@ export interface MeasureLineOptions {
     format?: (length: number) => string;
     clipPlanes?: BABYLON.Plane[];
     snap?: Snap;
+    operationDomEnable?: boolean;
 }
 
 export class MeasureLine extends AbstractMeasure {
@@ -105,6 +106,21 @@ export class MeasureLine extends AbstractMeasure {
                         this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
                             x.wapper.innerText = this.options.format!(distance);
                             x.setPosition(points[0].add(points[1]).scale(0.5));
+
+                            if (this.options.operationDomEnable) {
+                                x.wapper.style.pointerEvents = 'visible';
+                                x.wapper.style.cursor = 'pointer';
+                                this.createMeasureOperationDom(x, {
+                                    removeCallback: () => {
+                                        x.dispose();
+                                        this.meshes.forEach(m => {
+                                            if (m.name === x.id) {
+                                                this.scene.removeMesh(m);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
                         });
                         this.meshes.push(linesMeshOptions.instance!);
 

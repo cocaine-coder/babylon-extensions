@@ -13,6 +13,7 @@ function createMeasure(scene: BABYLON.Scene, clipper: SceneClipperBox, snap: Sna
         scene,
         clipPlanes: clipper.clipPlanes,
         snap,
+        operationDomEnable : true
     });
 }
 </script>

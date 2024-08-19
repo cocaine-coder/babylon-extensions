@@ -109,7 +109,8 @@ export namespace Utils {
         class?: string | string[];
         style?: Partial<CSSStyleDeclaration>,
         onCreate?: (el: HTMLElementTagNameMap[K]) => void;
-        children?: HTMLElement[]
+        children?: (HTMLElement | string)[],
+        innerText?: string
     }): HTMLElementTagNameMap[K] {
         const el = document.createElement(tagName);
 
@@ -135,9 +136,16 @@ export namespace Utils {
         }
 
         if (options.children) {
-            options.children.forEach(child => el.append(child));
+            options.children.forEach(child => {
+                if (typeof child === 'string')
+                    el.innerHTML += child;
+                else
+                    el.append(child)
+            });
+        } else if (options.innerText) {
+            el.innerText = options.innerText;
         }
-
+        
         options?.onCreate?.(el);
 
         return el;
