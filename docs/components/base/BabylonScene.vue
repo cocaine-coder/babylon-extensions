@@ -73,8 +73,15 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    window.removeEventListener('resize', onWindowResize);
-    engine.dispose();
+    try {
+        if (engine) {
+            window.removeEventListener('resize', onWindowResize);
+            engine.dispose();
+        }
+    } catch {
+
+    }
+
 })
 </script>
 
@@ -89,6 +96,7 @@ onUnmounted(() => {
 }
 
 ::-webkit-scrollbar {
-  display: none; /* Chrome Safari */
+    display: none;
+    /* Chrome Safari */
 }
 </style>

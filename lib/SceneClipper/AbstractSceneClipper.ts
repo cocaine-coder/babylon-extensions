@@ -20,17 +20,24 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
      *
      */
     constructor(protected scene: BABYLON.Scene, protected filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
-        this.auxiliaryMesh = this.createAuxiliaryMesh();
-        this.auxiliaryMesh.isPickable = false;
-        this._originPosition = this.auxiliaryMesh.position.asArray();
-        this.gizmoManager = this.createGizmoManager(this.auxiliaryMesh);
+        this.gizmoManager = new BABYLON.GizmoManager(scene);
+        this.gizmoManager.enableAutoPicking = false;
+        this.gizmoManager.utilityLayer.utilityLayerScene.autoClearDepthAndStencil = false;
+        this.createGizmo(this.gizmoManager);
 
+        this.auxiliaryMesh = this.createAuxiliaryMesh(this.gizmoManager);
+        this.auxiliaryMesh.isPickable = false;
         this.auxiliaryMesh.isVisible = false;
+        this._originPosition = this.auxiliaryMesh.position.asArray();
+
+
+        this.gizmoManager.attachableMeshes = [this.auxiliaryMesh];
+        this.gizmoManager.attachToMesh(this.auxiliaryMesh);
     }
 
-    protected abstract createAuxiliaryMesh(): BABYLON.Mesh;
+    protected abstract createAuxiliaryMesh(gizmoManager: BABYLON.GizmoManager): BABYLON.Mesh;
 
-    protected abstract createGizmoManager(auxiliaryMesh: BABYLON.Mesh): BABYLON.GizmoManager;
+    protected abstract createGizmo(gizmoManager: BABYLON.GizmoManager): void;
 
     protected abstract setClipperEnable(value: boolean): void;
 

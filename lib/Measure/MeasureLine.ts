@@ -13,6 +13,7 @@ export interface MeasureLineOptions {
     format?: (length: number) => string;
     clipPlanes?: BABYLON.Plane[];
     snap?: Snap;
+    operationDomEnable?: boolean;
 }
 
 export class MeasureLine extends AbstractMeasure {
@@ -105,6 +106,21 @@ export class MeasureLine extends AbstractMeasure {
                         this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
                             x.wapper.innerText = this.options.format!(distance);
                             x.setPosition(points[0].add(points[1]).scale(0.5));
+
+                            if (this.options.operationDomEnable) {
+                                x.wapper.style.pointerEvents = 'visible';
+                                x.wapper.style.cursor = 'pointer';
+                                this.createMeasureOperationDom(x, {
+                                    removeCallback: () => {
+                                        x.dispose();
+                                        this.meshes.forEach(m => {
+                                            if (m.name === x.id) {
+                                                this.scene.removeMesh(m);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
                         });
                         this.meshes.push(linesMeshOptions.instance!);
 
@@ -130,12 +146,17 @@ export class MeasureLine extends AbstractMeasure {
              * 鼠标移动绘制动态线
              */
             else if (e.type === BABYLON.PointerEventTypes.POINTERMOVE && linesMeshOptions.id) {
-                const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
-                if (!pickInfo || !pickInfo.pickedPoint) return;
+                let point = this.snap?.snapPoint;
+                if (!point) {
+                    const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
+                    if (!pickInfo || !pickInfo.pickedPoint) return;
+
+                    point = pickInfo.pickedPoint;
+                }
 
                 const points = linesMeshOptions.points;
                 if (points.length === 2) points.pop();
-                points.push(pickInfo.pickedPoint);
+                points.push(point);
 
                 linesMeshOptions.instance = BABYLON.MeshBuilder.CreateLines(linesMeshOptions.id, linesMeshOptions);
                 linesMeshOptions.instance.isPickable = false;

@@ -40,14 +40,16 @@ export namespace Utils {
         animatable2!.disposeOnEnd = true;
     }
 
-    export function pickSceneWithClipPlanes(scene: BABYLON.Scene , otherPlanes ?: BABYLON.Plane[]) {
+    export function pickSceneWithClipPlanes(scene: BABYLON.Scene, otherPlanes?: BABYLON.Plane[]) {
         const clipPlanes = [scene.clipPlane,
         scene.clipPlane2,
         scene.clipPlane3,
         scene.clipPlane4,
         scene.clipPlane5,
         scene.clipPlane6].filter(x => x !== undefined && x !== null);
-        if(otherPlanes) clipPlanes.push(...otherPlanes);
+        if (otherPlanes) clipPlanes.push(...otherPlanes);
+
+        if (clipPlanes.length == 0) return scene.pick(scene.pointerX, scene.pointerY);
 
         let world: BABYLON.Matrix;
 
@@ -58,10 +60,10 @@ export namespace Utils {
                 }
                 return mesh.isPickable;
             },
-             undefined,
-             undefined,
-            
-             // TRIANGLE PREDICATE
+            undefined,
+            undefined,
+
+            // TRIANGLE PREDICATE
             (p0, p1, p2, ray, i0, i1, i2) => {
 
                 // fully transparent
@@ -69,7 +71,7 @@ export namespace Utils {
                 if (i0 < 0.00001)
 
                     return false;
-                    
+
                 if (clipPlanes.length == 0)
                     return true;
 
@@ -107,7 +109,8 @@ export namespace Utils {
         class?: string | string[];
         style?: Partial<CSSStyleDeclaration>,
         onCreate?: (el: HTMLElementTagNameMap[K]) => void;
-        children?: HTMLElement[]
+        children?: (HTMLElement | string)[],
+        innerText?: string
     }): HTMLElementTagNameMap[K] {
         const el = document.createElement(tagName);
 
@@ -133,9 +136,16 @@ export namespace Utils {
         }
 
         if (options.children) {
-            options.children.forEach(child => el.append(child));
+            options.children.forEach(child => {
+                if (typeof child === 'string')
+                    el.innerHTML += child;
+                else
+                    el.append(child)
+            });
+        } else if (options.innerText) {
+            el.innerText = options.innerText;
         }
-
+        
         options?.onCreate?.(el);
 
         return el;

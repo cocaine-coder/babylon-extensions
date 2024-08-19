@@ -11,7 +11,8 @@ function createMeasure(scene: BABYLON.Scene, clipper: SceneClipperBox, snap: Sna
     return new MeasureLine({
         scene,
         clipPlanes: clipper.clipPlanes,
-        snap
+        snap,
+        operationDomEnable : true
     });
 }
 </script>
