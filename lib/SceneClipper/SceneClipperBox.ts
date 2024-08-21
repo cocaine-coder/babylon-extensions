@@ -113,7 +113,8 @@ export class SceneClipperBox extends AbstractSceneClipper {
                 if (!(m instanceof BABYLON.Mesh)) return;
                 m.onBeforeRenderObservable.clear();
                 m.onAfterRenderObservable.clear();
-            })
+            });
+            this.clipPlanes.length = 0;
         }
     }
 }
