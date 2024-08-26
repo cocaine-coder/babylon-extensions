@@ -1,4 +1,4 @@
-import * as BABYLON from "@babylonjs/core";
+import { AbstractMesh, Scene } from "@babylonjs/core";
 import { FollowCameraDomElement, FollowDomManager } from "../DomManager";
 import { Snap } from "../Snap";
 import { Utils } from "../utils";
@@ -13,13 +13,13 @@ export interface IMeasure {
 
 export abstract class AbstractMeasure implements IMeasure {
     private _started = false;
-    protected meshes = new Array<BABYLON.AbstractMesh>();
+    protected meshes = new Array<AbstractMesh>();
     protected followDomManager: FollowDomManager;
 
     /**
      *
      */
-    constructor(protected scene: BABYLON.Scene, protected snap?: Snap) {
+    constructor(protected scene: Scene, protected snap?: Snap) {
         this.followDomManager = new FollowDomManager(scene);
     }
 

@@ -1,6 +1,7 @@
-import * as BABYLON from "@babylonjs/core";
+import { Scene, AbstractMesh, ArcRotateCamera, Plane, Matrix, Vector3 } from "@babylonjs/core";
+
 export namespace Utils {
-    export function getMeshesExtendsInfo(scene: BABYLON.Scene, filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
+    export function getMeshesExtendsInfo(scene: Scene, filter?: (mesh: AbstractMesh) => boolean) {
         const worldExtends = scene.getWorldExtends(filter);
         const worldSize = worldExtends.max.subtract(worldExtends.min);
         const worldCenter = worldExtends.min.add(worldSize.scale(0.5));
@@ -8,7 +9,7 @@ export namespace Utils {
         return { worldExtends, worldCenter, worldSize };
     }
 
-    export function zoomArcRotateCameraToAll(camera: BABYLON.ArcRotateCamera, options: {
+    export function zoomArcRotateCameraToAll(camera: ArcRotateCamera, options: {
         alpha?: number,
         beta?: number,
         duration?: number
@@ -25,22 +26,22 @@ export namespace Utils {
         camera.upperRadiusLimit = radius * 1;
 
         if (options.alpha !== undefined) {
-            const animatable = BABYLON.Animation.CreateAndStartAnimation("camera-fly-to-world-alpha", camera, 'alpha', 60, 60 * duration / 1000, camera.alpha, options.alpha, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
+            const animatable = Animation.CreateAndStartAnimation("camera-fly-to-world-alpha", camera, 'alpha', 60, 60 * duration / 1000, camera.alpha, options.alpha, Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
             animatable!.disposeOnEnd = true;
         }
         if (options.beta !== undefined) {
-            const animatable = BABYLON.Animation.CreateAndStartAnimation("camera-fly-to-world-beta", camera, 'beta', 60, 60 * duration / 1000, camera.beta, options.beta, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
+            const animatable = Animation.CreateAndStartAnimation("camera-fly-to-world-beta", camera, 'beta', 60, 60 * duration / 1000, camera.beta, options.beta, Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
             animatable!.disposeOnEnd = true;
         }
 
-        const animatable1 = BABYLON.Animation.CreateAndStartAnimation("camera-fly-to-world-target", camera, 'target', 60, 60 * duration / 1000, camera.target, target, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
+        const animatable1 = Animation.CreateAndStartAnimation("camera-fly-to-world-target", camera, 'target', 60, 60 * duration / 1000, camera.target, target, Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
         animatable1!.disposeOnEnd = true;
 
-        const animatable2 = BABYLON.Animation.CreateAndStartAnimation("camera-fly-to-world-radius", camera, 'radius', 60, 60 * duration / 1000, camera.radius, radius, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
+        const animatable2 = Animation.CreateAndStartAnimation("camera-fly-to-world-radius", camera, 'radius', 60, 60 * duration / 1000, camera.radius, radius, Animation.ANIMATIONLOOPMODE_CONSTANT, undefined, undefined, scene);
         animatable2!.disposeOnEnd = true;
     }
 
-    export function pickSceneWithClipPlanes(scene: BABYLON.Scene, otherPlanes?: BABYLON.Plane[]) {
+    export function pickSceneWithClipPlanes(scene: Scene, otherPlanes?: Plane[]) {
         const clipPlanes = [scene.clipPlane,
         scene.clipPlane2,
         scene.clipPlane3,
@@ -51,7 +52,7 @@ export namespace Utils {
 
         if (clipPlanes.length == 0) return scene.pick(scene.pointerX, scene.pointerY);
 
-        let world: BABYLON.Matrix;
+        let world: Matrix;
 
         return scene.pick(scene.pointerX, scene.pointerY,
             (mesh) => {
@@ -83,14 +84,14 @@ export namespace Utils {
 
                 // Get picked point
 
-                const worldOrigin = new BABYLON.Vector3();
-                const direction = new BABYLON.Vector3();
+                const worldOrigin = new Vector3();
+                const direction = new Vector3();
 
-                BABYLON.Vector3.TransformCoordinatesToRef(ray.origin, world, worldOrigin);
+                Vector3.TransformCoordinatesToRef(ray.origin, world, worldOrigin);
 
                 ray.direction.scaleToRef(intersectInfo.distance, direction);
 
-                const worldDirection = BABYLON.Vector3.TransformNormal(direction, world);
+                const worldDirection = Vector3.TransformNormal(direction, world);
 
                 const pickedPoint = worldDirection.addInPlace(worldOrigin);
 

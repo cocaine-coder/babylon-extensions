@@ -1,16 +1,16 @@
-import * as BABYLON from '@babylonjs/core';
+import { Scene, Plane, Observer, PointerInfo, Vector3, PointerEventTypes, Mesh, VertexBuffer, Matrix } from '@babylonjs/core';
 import { Utils } from './utils';
 import { FollowDomManager } from './DomManager';
 
 export interface SnapOptions {
-    scene: BABYLON.Scene,
-    clipPlanes?: BABYLON.Plane[];
+    scene: Scene,
+    clipPlanes?: Plane[];
     tolerance?: number;
 }
 
 export class Snap {
-    private _obs: BABYLON.Observer<BABYLON.PointerInfo> | undefined;
-    private _snapPoint: BABYLON.Vector3 | undefined;
+    private _obs: Observer<PointerInfo> | undefined;
+    private _snapPoint: Vector3 | undefined;
     private _domManager: FollowDomManager;
 
     constructor(private options: SnapOptions) {
@@ -24,7 +24,7 @@ export class Snap {
                 height: "8px",
                 border: "2px solid #4cff33"
             }
-        }), new BABYLON.Vector3(0, 0, 0)).wapper;
+        }), new Vector3(0, 0, 0)).wapper;
         wapper.style.pointerEvents = 'none';
         wapper.className = "snap-box";
         this._domManager.setVisible(false);
@@ -34,7 +34,7 @@ export class Snap {
         return this._snapPoint;
     }
 
-    private set snapPoint(value: BABYLON.Vector3 | undefined) {
+    private set snapPoint(value: Vector3 | undefined) {
         if (value) {
             this._domManager.get("snap-box").forEach(x => {
                 x.setPosition(value);
@@ -53,7 +53,7 @@ export class Snap {
 
         this._obs = scene.onPointerObservable.add((p, e) => {
 
-            if (p.type !== BABYLON.PointerEventTypes.POINTERMOVE) {
+            if (p.type !== PointerEventTypes.POINTERMOVE) {
                 return;
             };
 
@@ -62,33 +62,33 @@ export class Snap {
             const faceId = pickInfo.faceId;
             const point = pickInfo.pickedPoint;
 
-            if (point && mesh && mesh instanceof BABYLON.Mesh) {
-                const positions = mesh.getVerticesData(BABYLON.VertexBuffer.PositionKind)!;
+            if (point && mesh && mesh instanceof Mesh) {
+                const positions = mesh.getVerticesData(VertexBuffer.PositionKind)!;
                 const indices = mesh.getIndices()!;
 
                 const i1 = indices[faceId * 3];
                 const i2 = indices[faceId * 3 + 1];
                 const i3 = indices[faceId * 3 + 2];
-                const p1 = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(positions[i1 * 3], positions[i1 * 3 + 1], positions[i1 * 3 + 2]), mesh.getWorldMatrix());
-                const p2 = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(positions[i2 * 3], positions[i2 * 3 + 1], positions[i2 * 3 + 2]), mesh.getWorldMatrix());
-                const p3 = BABYLON.Vector3.TransformCoordinates(new BABYLON.Vector3(positions[i3 * 3], positions[i3 * 3 + 1], positions[i3 * 3 + 2]), mesh.getWorldMatrix());
+                const p1 = Vector3.TransformCoordinates(new Vector3(positions[i1 * 3], positions[i1 * 3 + 1], positions[i1 * 3 + 2]), mesh.getWorldMatrix());
+                const p2 = Vector3.TransformCoordinates(new Vector3(positions[i2 * 3], positions[i2 * 3 + 1], positions[i2 * 3 + 2]), mesh.getWorldMatrix());
+                const p3 = Vector3.TransformCoordinates(new Vector3(positions[i3 * 3], positions[i3 * 3 + 1], positions[i3 * 3 + 2]), mesh.getWorldMatrix());
 
                 const canvas = scene.getEngine().getRenderingCanvas()!;
-                const coordScalePoint = BABYLON.Vector3.Project(
+                const coordScalePoint = Vector3.Project(
                     point,
-                    BABYLON.Matrix.Identity(),
+                    Matrix.Identity(),
                     scene.getTransformMatrix(),
                     scene.activeCamera!.viewport);
                 const top = canvas.clientHeight * coordScalePoint.y;
                 const left = canvas.clientWidth * coordScalePoint.x;
 
-                let snapedPoint: BABYLON.Vector3 | undefined;
+                let snapedPoint: Vector3 | undefined;
                 let minDistance = Number.MAX_VALUE;
 
                 [p1, p2, p3].forEach(p => {
-                    const coordScale = BABYLON.Vector3.Project(
+                    const coordScale = Vector3.Project(
                         p,
-                        BABYLON.Matrix.Identity(),
+                        Matrix.Identity(),
                         scene.getTransformMatrix(),
                         scene.activeCamera!.viewport);
                     const top1 = canvas.clientHeight * coordScale.y;

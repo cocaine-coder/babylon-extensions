@@ -1,16 +1,17 @@
-import * as BABYLON from '@babylonjs/core';
+
+import { Scene, Vector3, Observer, Matrix } from '@babylonjs/core';
 import { Utils } from './utils';
 
 export interface FollowCameraDomElementOptions {
     id: string;
-    scene: BABYLON.Scene;
-    position: BABYLON.Vector3;
+    scene: Scene;
+    position: Vector3;
     content: HTMLElement | string;
     parent: HTMLElement;
 }
 
 export class FollowCameraDomElement {
-    private _obs: BABYLON.Observer<BABYLON.Scene>;
+    private _obs: Observer<Scene>;
 
     readonly id: string;
     readonly wapper = document.createElement('div');
@@ -32,9 +33,9 @@ export class FollowCameraDomElement {
         this._obs = options.scene.onBeforeRenderObservable.add((s, e) => {
             const transformMatrix = options.scene.getTransformMatrix();
 
-            const coordScale = BABYLON.Vector3.Project(
+            const coordScale = Vector3.Project(
                 options.position,
-                BABYLON.Matrix.Identity(),
+                Matrix.Identity(),
                 transformMatrix,
                 options.scene.activeCamera!.viewport);
 
@@ -53,7 +54,7 @@ export class FollowCameraDomElement {
         this.wapper.append(content);
     }
 
-    setPosition(position: BABYLON.Vector3) {
+    setPosition(position: Vector3) {
         this.options.position = position;
     }
 
@@ -75,11 +76,11 @@ export class FollowDomManager {
     /**
      *
      */
-    constructor(private scene: BABYLON.Scene) {
+    constructor(private scene: Scene) {
         this._container = this.createContainer();
     }
 
-    set(id: string, content: HTMLElement | string, position: BABYLON.Vector3) {
+    set(id: string, content: HTMLElement | string, position: Vector3) {
         const element = new FollowCameraDomElement({
             id,
             scene: this.scene,

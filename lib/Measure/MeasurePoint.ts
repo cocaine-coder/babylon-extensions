@@ -1,24 +1,24 @@
-import * as BABYLON from '@babylonjs/core';
+import { Scene, Vector3, Plane, Observer, PointerInfo, PointerEventTypes, GUID } from "@babylonjs/core";
 import { AbstractMeasure } from "./AbstractMeasure";
 import { Utils } from '../utils';
 import { Snap } from '../Snap';
 
 export interface MeasurePointOptions {
-    scene: BABYLON.Scene;
+    scene: Scene;
     style?: {
         color?: string;
         size?: number;
         iconColor?: string;
     }
 
-    format?: (position: BABYLON.Vector3) => string;
-    clipPlanes?: BABYLON.Plane[];
+    format?: (position: Vector3) => string;
+    clipPlanes?: Plane[];
     snap?: Snap;
     operationDomEnable?: boolean;
 }
 
 export class MeasurePoint extends AbstractMeasure {
-    private pointerObserver: BABYLON.Observer<BABYLON.PointerInfo> | undefined;
+    private pointerObserver: Observer<PointerInfo> | undefined;
 
     /**
      *
@@ -30,7 +30,7 @@ export class MeasurePoint extends AbstractMeasure {
         options.style.color ??= "white";
         options.style.size ??= 14;
         options.style.iconColor ??= "red";
-        options.format ??= (position: BABYLON.Vector3) => position.y.toFixed(2) + "m";
+        options.format ??= (position: Vector3) => position.y.toFixed(2) + "m";
     }
 
     protected onStart(): void {
@@ -47,7 +47,7 @@ export class MeasurePoint extends AbstractMeasure {
              * 鼠标按下
              * 计时判断是否是拖拽行为
              */
-            if (e.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+            if (e.type === PointerEventTypes.POINTERDOWN) {
                 timer = setTimeout(() => {
                     isDrag = true;
                 }, 200);
@@ -61,7 +61,7 @@ export class MeasurePoint extends AbstractMeasure {
              * 
              * 3 重置isDrag状态
              */
-            else if (e.type === BABYLON.PointerEventTypes.POINTERUP) {
+            else if (e.type === PointerEventTypes.POINTERUP) {
                 if (timer) clearTimeout(timer);
 
                 const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
@@ -82,7 +82,7 @@ export class MeasurePoint extends AbstractMeasure {
                     </svg>
                     `
 
-                    const el = this.followDomManager.set(BABYLON.GUID.RandomId(), div, position);
+                    const el = this.followDomManager.set(GUID.RandomId(), div, position);
                     el.wapper.style.transform = "translate(-7px, -100%)";
                     el.wapper.style.fontSize = this.options.style!.size! + "px";
 

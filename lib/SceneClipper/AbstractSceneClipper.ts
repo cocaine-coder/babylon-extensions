@@ -1,4 +1,4 @@
-import * as BABYLON from '@babylonjs/core';
+import { GizmoManager, Mesh, Plane, Scene, AbstractMesh, Vector3 } from "@babylonjs/core";
 
 export interface ISceneClipper {
     setEnable(value: boolean): void;
@@ -12,15 +12,15 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     private _disposed = false;
     private _enable = false;
     private _originPosition: Array<number>;
-    readonly gizmoManager: BABYLON.GizmoManager;
-    readonly auxiliaryMesh: BABYLON.Mesh;
-    readonly clipPlanes: Array<BABYLON.Plane> = [];
+    readonly gizmoManager: GizmoManager;
+    readonly auxiliaryMesh: Mesh;
+    readonly clipPlanes: Array<Plane> = [];
 
     /**
      *
      */
-    constructor(protected scene: BABYLON.Scene, protected filter?: (mesh: BABYLON.AbstractMesh) => boolean) {
-        this.gizmoManager = new BABYLON.GizmoManager(scene);
+    constructor(protected scene: Scene, protected filter?: (mesh: AbstractMesh) => boolean) {
+        this.gizmoManager = new GizmoManager(scene);
         this.gizmoManager.enableAutoPicking = false;
         this.gizmoManager.utilityLayer.utilityLayerScene.autoClearDepthAndStencil = false;
         this.createGizmo(this.gizmoManager);
@@ -35,9 +35,9 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
         this.gizmoManager.attachToMesh(this.auxiliaryMesh);
     }
 
-    protected abstract createAuxiliaryMesh(gizmoManager: BABYLON.GizmoManager): BABYLON.Mesh;
+    protected abstract createAuxiliaryMesh(gizmoManager: GizmoManager): Mesh;
 
-    protected abstract createGizmo(gizmoManager: BABYLON.GizmoManager): void;
+    protected abstract createGizmo(gizmoManager: GizmoManager): void;
 
     protected abstract setClipperEnable(value: boolean): void;
 
@@ -63,9 +63,9 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
     reset(): void {
         if (this._disposed) return;
 
-        this.auxiliaryMesh.position = new BABYLON.Vector3(this._originPosition[0], this._originPosition[1], this._originPosition[2]);
-        this.auxiliaryMesh.rotation = BABYLON.Vector3.Zero();
-        this.auxiliaryMesh.scaling = BABYLON.Vector3.One();
+        this.auxiliaryMesh.position = new Vector3(this._originPosition[0], this._originPosition[1], this._originPosition[2]);
+        this.auxiliaryMesh.rotation = Vector3.Zero();
+        this.auxiliaryMesh.scaling = Vector3.One();
     }
 
     dispose(): void {
@@ -77,7 +77,7 @@ export abstract class AbstractSceneClipper implements ISceneClipper {
         this._disposed = true;
     }
 
-    private setMeshVisibleRecursive(mesh?: BABYLON.Mesh, visible: boolean = true) {
+    private setMeshVisibleRecursive(mesh?: Mesh, visible: boolean = true) {
         if (!mesh) return;
 
         mesh.isVisible = visible;

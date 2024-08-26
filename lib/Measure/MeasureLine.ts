@@ -1,23 +1,25 @@
-import * as BABYLON from '@babylonjs/core';
+import { Scene, Color4, Plane, Observer, PointerInfo, Vector3, LinesMesh, PointerEventTypes, MeshBuilder, GUID } from "@babylonjs/core";
+
 import { AbstractMeasure } from "./AbstractMeasure";
 import { Utils } from '../utils';
 import { Snap } from '../Snap';
+
 export interface MeasureLineOptions {
-    scene: BABYLON.Scene;
+    scene: Scene;
     style?: {
         color?: string;
         size?: number;
-        lineColor?: BABYLON.Color4;
+        lineColor?: Color4;
     };
 
     format?: (length: number) => string;
-    clipPlanes?: BABYLON.Plane[];
+    clipPlanes?: Plane[];
     snap?: Snap;
     operationDomEnable?: boolean;
 }
 
 export class MeasureLine extends AbstractMeasure {
-    private pointerObserver: BABYLON.Observer<BABYLON.PointerInfo> | undefined;
+    private pointerObserver: Observer<PointerInfo> | undefined;
 
 
     /**
@@ -29,13 +31,13 @@ export class MeasureLine extends AbstractMeasure {
         options.style ??= {};
         options.style.color ??= "white";
         options.style.size ??= 14;
-        options.style.lineColor ??= new BABYLON.Color4(1, 0, 0, 1);
+        options.style.lineColor ??= new Color4(1, 0, 0, 1);
         options.format ??= (length: number) => length.toFixed(2) + "m";
     }
 
     protected onStart(): void {
         const linesMeshOptions = {
-            points: new Array<BABYLON.Vector3>(),
+            points: new Array<Vector3>(),
             updatable: true,
             colors: [
                 this.options.style!.lineColor!,
@@ -43,10 +45,10 @@ export class MeasureLine extends AbstractMeasure {
             ]
         } as {
             id: string | undefined,
-            points: BABYLON.Vector3[];
+            points: Vector3[];
             updatable: boolean;
-            instance?: BABYLON.LinesMesh;
-            colors: BABYLON.Color4[];
+            instance?: LinesMesh;
+            colors: Color4[];
         }
 
         let timer: number | undefined;
@@ -62,7 +64,7 @@ export class MeasureLine extends AbstractMeasure {
              * 鼠标按下
              * 计时判断是否是拖拽行为
              */
-            if (e.type === BABYLON.PointerEventTypes.POINTERDOWN) {
+            if (e.type === PointerEventTypes.POINTERDOWN) {
                 timer = setTimeout(() => {
                     isDrag = true;
                 }, 200);
@@ -76,7 +78,7 @@ export class MeasureLine extends AbstractMeasure {
              * 
              * 3 重置isDrag状态
              */
-            else if (e.type === BABYLON.PointerEventTypes.POINTERUP) {
+            else if (e.type === PointerEventTypes.POINTERUP) {
                 if (timer) {
                     clearTimeout(timer);
                     timer = undefined;
@@ -98,11 +100,11 @@ export class MeasureLine extends AbstractMeasure {
                         points.pop();
                         points.push(position);
 
-                        linesMeshOptions.instance = BABYLON.MeshBuilder.CreateLines(linesMeshOptions.id!, linesMeshOptions);
+                        linesMeshOptions.instance = MeshBuilder.CreateLines(linesMeshOptions.id!, linesMeshOptions);
                         linesMeshOptions.instance.isPickable = false;
                         linesMeshOptions.instance.renderingGroupId = 1;
 
-                        const distance = BABYLON.Vector3.Distance(points[0], points[1]);
+                        const distance = Vector3.Distance(points[0], points[1]);
                         this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
                             x.wapper.innerText = this.options.format!(distance);
                             x.setPosition(points[0].add(points[1]).scale(0.5));
@@ -128,7 +130,7 @@ export class MeasureLine extends AbstractMeasure {
                         linesMeshOptions.id = undefined;
                         points.length = 0;
                     } else {
-                        linesMeshOptions.id = BABYLON.GUID.RandomId();
+                        linesMeshOptions.id = GUID.RandomId();
                         const el = this.followDomManager.set(linesMeshOptions.id, "", position);
                         el.wapper.style.pointerEvents = 'none';
                         el.wapper.style.fontSize = this.options.style!.size! + "px";
@@ -145,7 +147,7 @@ export class MeasureLine extends AbstractMeasure {
             /**
              * 鼠标移动绘制动态线
              */
-            else if (e.type === BABYLON.PointerEventTypes.POINTERMOVE && linesMeshOptions.id) {
+            else if (e.type === PointerEventTypes.POINTERMOVE && linesMeshOptions.id) {
                 let point = this.snap?.snapPoint;
                 if (!point) {
                     const pickInfo = Utils.pickSceneWithClipPlanes(this.scene, this.options.clipPlanes);
@@ -158,11 +160,11 @@ export class MeasureLine extends AbstractMeasure {
                 if (points.length === 2) points.pop();
                 points.push(point);
 
-                linesMeshOptions.instance = BABYLON.MeshBuilder.CreateLines(linesMeshOptions.id, linesMeshOptions);
+                linesMeshOptions.instance = MeshBuilder.CreateLines(linesMeshOptions.id, linesMeshOptions);
                 linesMeshOptions.instance.isPickable = false;
                 linesMeshOptions.instance.renderingGroupId = 1;
 
-                const distance = BABYLON.Vector3.Distance(points[0], points[1]);
+                const distance = Vector3.Distance(points[0], points[1]);
                 this.followDomManager.get(linesMeshOptions.id!).forEach(x => {
                     x.wapper.innerText = this.options.format!(distance);
                     x.setPosition(points[0].add(points[1]).scale(0.5));
