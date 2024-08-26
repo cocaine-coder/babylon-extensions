@@ -1,4 +1,4 @@
-import { Scene, AbstractMesh, ArcRotateCamera, Plane, Matrix, Vector3 } from "@babylonjs/core";
+import { Scene, AbstractMesh, ArcRotateCamera, Plane, Matrix, Vector3 ,Animation} from "@babylonjs/core";
 
 export namespace Utils {
     export function getMeshesExtendsInfo(scene: Scene, filter?: (mesh: AbstractMesh) => boolean) {
