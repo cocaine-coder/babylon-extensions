@@ -54,6 +54,23 @@ export class MeasureLine extends AbstractMeasure {
         let timer: number | undefined;
         let isDrag = false;
 
+        const escKeyDownHandler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                if(!linesMeshOptions.id) return;
+
+                linesMeshOptions.points.length = 0;
+                if(linesMeshOptions.instance){
+                    this.scene.removeMesh(linesMeshOptions.instance)
+                    linesMeshOptions.instance = undefined;
+                }
+                
+                const el = this.followDomManager.get(linesMeshOptions.id)[0];
+                el.dispose();
+
+                document.removeEventListener('keydown', escKeyDownHandler);
+            }
+        }
+
         this.pointerObserver = this.scene.onPointerObservable.add((e, s) => {
             // 左键
             if (e.event.inputIndex !== 2 && e.event.inputIndex !== 12) {
@@ -138,6 +155,8 @@ export class MeasureLine extends AbstractMeasure {
                         el.wapper.style.paddingInline = "4px";
                         el.wapper.style.color = 'white';
                         points.push(position);
+
+                        document.addEventListener('keydown', escKeyDownHandler);
                     }
                 }
 
@@ -159,6 +178,12 @@ export class MeasureLine extends AbstractMeasure {
                 const points = linesMeshOptions.points;
                 if (points.length === 2) points.pop();
                 points.push(point);
+
+                // 防止按下esc键后继续执行mousemove
+                if(points.length !== 2) {
+                    points.length = 0; 
+                    return;
+                }
 
                 linesMeshOptions.instance = MeshBuilder.CreateLines(linesMeshOptions.id, linesMeshOptions);
                 linesMeshOptions.instance.isPickable = false;
